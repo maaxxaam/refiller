@@ -6426,6 +6426,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.AJAX.Cnds.OnComplete,
 		C3.Plugins.AJAX.Exps.LastData,
 		C3.Plugins.Arr.Exps.At,
+		C3.Plugins.Sprite.Acts.Destroy,
+		C3.Plugins.Text.Acts.Destroy,
 		C3.Plugins.System.Exps.viewportheight,
 		C3.Plugins.Arr.Exps.Width,
 		C3.Plugins.System.Exps.viewportwidth,
@@ -6437,7 +6439,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Dictionary.Exps.Get,
 		C3.Plugins.Sprite.Acts.ZMoveToObject,
 		C3.Plugins.System.Cnds.PickNth,
-		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Dictionary.Acts.JSONLoad,
 		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.Arr.Acts.SetSize,
@@ -6469,10 +6470,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.MoveToTop,
 		C3.Plugins.Sprite.Acts.StartAnim,
 		C3.Plugins.Arr.Acts.SetX,
-		C3.Plugins.Browser.Acts.Alert,
 		C3.Plugins.LocalStorage.Cnds.OnItemSet,
-		C3.Plugins.System.Acts.RestartLayout,
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
+		C3.Plugins.Sprite.Cnds.IsVisible,
+		C3.Plugins.Browser.Acts.Alert,
+		C3.Plugins.System.Acts.RestartLayout,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.Sprite.Exps.LayerName,
 		C3.Plugins.Audio.Acts.Play,
@@ -6532,6 +6534,10 @@ self.C3_JsPropNameTable = [
 	{Keyboard: 0},
 	{pointer: 0},
 	{Timeline: 0},
+	{WinBack: 0},
+	{LvlBigStars: 0},
+	{NextLvlBut: 0},
+	{LvlComplete: 0},
 	{Buttons: 0},
 	{AvailableLevels: 0},
 	{UnlockedLvl: 0},
@@ -6668,14 +6674,14 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 0,
 		() => "LvlButtons",
-		() => 2,
+		() => 19,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (33 + ((f0("LvlButtons") % 5) * 133));
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (33 + (Math.floor((f0("LvlButtons") / 5)) * 133));
+			return () => (33 + (Math.floor((f0("LvlButtons") / 5)) * 150));
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -6752,6 +6758,9 @@ self.C3_ExpressionFuncs = [
 		() => "Lvls",
 		() => "Dict",
 		() => "Pause Menu",
+		() => "NextTap",
+		() => "NextHover",
+		() => "NextIdle",
 		() => "UnTap",
 		() => "UnHover",
 		() => "UnIdle",
@@ -6826,6 +6835,7 @@ self.C3_ExpressionFuncs = [
 			return () => n0.ExpObject(f1("Bottles"), 0);
 		},
 		() => "Items",
+		() => 2,
 		p => {
 			const n0 = p._GetNode(0);
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -7021,17 +7031,25 @@ self.C3_ExpressionFuncs = [
 			const v3 = p._GetNode(3).GetVar();
 			return () => ((((v0.GetValue()) > (v1.GetValue()) ? 1 : 0)) ? (v2.GetValue()) : (v3.GetValue()));
 		},
+		() => "GUI",
+		() => 360,
+		() => 640,
+		() => "Text",
+		() => "Next",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const n1 = p._GetNode(1);
 			const v2 = p._GetNode(2).GetVar();
+			return () => (and((((and((("Уровень пройден!" + "\n") + "Потрачено: "), v0.GetValue()) + " ходов") + "\n") + "Ваш рекорд: "), n1.ExpObject((v2.GetValue() - 2))) + " ходов");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			const v2 = p._GetNode(2).GetVar();
 			const n3 = p._GetNode(3);
 			const v4 = p._GetNode(4).GetVar();
 			const v5 = p._GetNode(5).GetVar();
-			const n6 = p._GetNode(6);
-			const v7 = p._GetNode(7).GetVar();
-			const v8 = p._GetNode(8).GetVar();
-			return () => (and((((and((((and((("Level Complete!" + "\n") + "Your score: "), v0.GetValue()) + " moves") + "\n") + "Your record: "), n1.ExpObject((v2.GetValue() - 2))) + " moves") + "\n") + "You got "), ((((n3.ExpObject((v4.GetValue() - 2), 0)) >= (v5.GetValue()) ? 1 : 0)) ? (3) : (((((n6.ExpObject((v7.GetValue() - 2), 1)) >= (v8.GetValue()) ? 1 : 0)) ? (2) : (1))))) + " star(s)!");
+			return () => and("Stars", ((((n0.ExpObject((v1.GetValue() - 2), 0)) >= (v2.GetValue()) ? 1 : 0)) ? (3) : (((((n3.ExpObject((v4.GetValue() - 2), 1)) >= (v5.GetValue()) ? 1 : 0)) ? (2) : (1)))));
 		},
 		() => "BottleComplete",
 		p => {
@@ -7055,9 +7073,9 @@ self.C3_ExpressionFuncs = [
 			const f2 = p._GetNode(2).GetBoundMethod();
 			return () => n0.ExpObject(v1.GetValue(), f2("BottleComplete"));
 		},
-		() => 3,
-		() => "Это был последний уровень! Спасибо за игру!",
 		() => "DownItem",
+		() => 20,
+		() => "Это был последний уровень! Спасибо за игру!",
 		() => "Click",
 		() => "Music",
 		() => -10,
@@ -7067,11 +7085,8 @@ self.C3_ExpressionFuncs = [
 			return () => and("Intro", n0.ExpInstVar());
 		},
 		() => "UnderIdle",
-		() => "NextTap",
 		() => "UnderTap",
-		() => "NextHover",
-		() => "UnderHover",
-		() => "NextIdle"
+		() => "UnderHover"
 ];
 
 
