@@ -6436,6 +6436,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.System.Exps.dt,
+		C3.Plugins.System.Cnds.PickNth,
 		C3.Plugins.AJAX.Acts.RequestFile,
 		C3.Plugins.LocalStorage.Acts.CheckItemExists,
 		C3.Plugins.System.Acts.SetBoolVar,
@@ -6480,10 +6481,12 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Touch.Cnds.IsInTouch,
 		C3.Plugins.System.Cnds.PickLastCreated,
 		C3.Plugins.System.Acts.SetGroupActive,
-		C3.Plugins.Browser.Acts.Alert,
 		C3.Plugins.System.Exps.max,
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Sprite.Exps.Height,
+		C3.Plugins.System.Acts.ToggleBoolVar,
+		C3.Plugins.System.Acts.ResetGlobals,
+		C3.Plugins.LocalStorage.Acts.ClearStorage,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Text.Acts.Destroy,
 		C3.Plugins.Arr.Exps.Width,
@@ -6493,7 +6496,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.PickNthChild,
 		C3.Plugins.Dictionary.Exps.Get,
 		C3.Plugins.Sprite.Acts.ZMoveToObject,
-		C3.Plugins.System.Cnds.PickNth,
 		C3.Plugins.Dictionary.Acts.JSONLoad,
 		C3.Plugins.Arr.Acts.SetSize,
 		C3.Plugins.Arr.Exps.Height,
@@ -6513,18 +6515,22 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Sprite.Exps.ImagePointX,
 		C3.Plugins.Sprite.Exps.UID,
+		C3.Plugins.System.Acts.StopLoop,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Behaviors.Tween.Acts.TweenValue,
-		C3.Plugins.System.Acts.StopLoop,
+		C3.Plugins.Sprite.Acts.SetPosToObject,
 		C3.Plugins.Arr.Cnds.CompareXY,
 		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
+		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Plugins.System.Acts.WaitForPreviousActions,
 		C3.Plugins.Sprite.Acts.StartAnim,
 		C3.Plugins.Arr.Acts.SetX,
 		C3.Plugins.LocalStorage.Cnds.OnItemSet,
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
 		C3.Plugins.Sprite.Cnds.IsVisible,
+		C3.Plugins.Browser.Acts.Alert,
 		C3.Plugins.System.Acts.RestartLayout,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.Sprite.Exps.LayerName,
@@ -6532,9 +6538,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Audio.Cnds.IsTagPlaying,
 		C3.Plugins.Audio.Acts.Stop,
 		C3.Plugins.Keyboard.Cnds.OnKey,
-		C3.Plugins.System.Acts.ToggleBoolVar,
-		C3.Plugins.System.Acts.ResetGlobals,
-		C3.Plugins.LocalStorage.Acts.ClearStorage,
 		C3.Plugins.LocalStorage.Cnds.OnCleared,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
 		C3.Plugins.Timeline.Acts.PlayTimelineByName
@@ -6590,6 +6593,9 @@ self.C3_JsPropNameTable = [
 	{LvlBigStars: 0},
 	{NextLvlBut: 0},
 	{LvlComplete: 0},
+	{SettBut: 0},
+	{SettingsDesc: 0},
+	{ResetBut: 0},
 	{Buttons: 0},
 	{AvailableLevels: 0},
 	{UnlockedLvl: 0},
@@ -6617,10 +6623,12 @@ self.C3_JsPropNameTable = [
 	{X: 0},
 	{Y: 0},
 	{Segments: 0},
+	{Found: 0},
 	{Acc: 0},
 	{Bad: 0},
 	{Index: 0},
 	{SFX: 0},
+	{ExtraAnimation: 0},
 	{Music: 0}
 ];
 }
@@ -6753,9 +6761,17 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0();
 		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((v0.GetValue()) ? ("On") : ("Off"));
+		},
+		() => 2,
 		() => "Stars",
 		() => "UnlockedLvl",
 		() => "LvlRatings",
+		() => "Music",
+		() => "SFX",
+		() => "ExtraAnim",
 		() => "Play",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
@@ -6850,7 +6866,6 @@ self.C3_ExpressionFuncs = [
 			const f7 = p._GetNode(7).GetBoundMethod();
 			return () => ((v0.GetValue()) ? (C3.lerp(f1(), f2((f3() - (f4() - v5.GetValue())), v6.GetValue()), 0.5)) : ((f7(0) / 2)));
 		},
-		() => "scac",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const n1 = p._GetNode(1);
@@ -6859,6 +6874,10 @@ self.C3_ExpressionFuncs = [
 			const f4 = p._GetNode(4).GetBoundMethod();
 			const f5 = p._GetNode(5).GetBoundMethod();
 			return () => f0(((((n1.ExpObject() + n2.ExpObject()) + n3.ExpObject()) + 60) - (f4(0) / 2)), (f5(0) / 2));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0(0) / 2);
 		},
 		() => "Pause",
 		() => "Lvls",
@@ -6963,7 +6982,6 @@ self.C3_ExpressionFuncs = [
 			return () => n0.ExpObject(f1("Bottles"), 0);
 		},
 		() => "Items",
-		() => 2,
 		p => {
 			const n0 = p._GetNode(0);
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -7113,8 +7131,9 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject("Above");
 		},
-		() => 0.3,
+		() => 0.1,
 		() => "Cooldown",
+		() => "Above",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (f0("Pick") + 1);
@@ -7123,8 +7142,17 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (f0("Pick") + 3);
 		},
+		() => 0.2,
 		() => "Down1Item",
-		() => 0.6,
+		() => "",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() + 30);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 60);
+		},
 		() => "LvlComplete",
 		p => {
 			const n0 = p._GetNode(0);
@@ -7201,9 +7229,7 @@ self.C3_ExpressionFuncs = [
 		() => 50,
 		() => "Это был последний уровень! Спасибо за игру!",
 		() => "Click",
-		() => "Music",
 		() => -10,
-		() => "",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => and("Intro", n0.ExpInstVar());
