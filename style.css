@@ -37,3 +37,13 @@ html, body, canvas {
 }
 
 
+@font-face {
+	font-family: 'rounds black';
+	src: url('fonts/rounds black.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'lobster';
+	src: url('fonts/lobster.woff2') format('woff2');
+}
+

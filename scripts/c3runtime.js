@@ -1894,8 +1894,8 @@ C3.PropertyTrackState.PropertyInterpolationAdapter.NumericInterpolationAdapterFo
 'use strict';const C3=self.C3;const Ease=self.Ease;
 C3.PropertyTrackState.NumericTypeAdapter=class NumericTypeAdapter{constructor(){}static WillChange(index,source,newValue,type){let oldValue;switch(type){case "behavior":oldValue=source.GetPropertyValueByIndex(index);break;case "effect":oldValue=source[index];break;case "instance-variable":oldValue=source.GetInstanceVariableValue(index);break;case "plugin":oldValue=source.GetPropertyValueByIndex(index);break}if(oldValue===newValue)return false;return true}static Interpolate(time,start,end,propertyTrack){if(!end){let propertyTrackDataItem=
 propertyTrack.GetPropertyTrackDataItem();const propertyTrackData=propertyTrack.GetPropertyTrackData();propertyTrackDataItem=propertyTrackData.GetLastPropertyKeyframeDataItem(propertyTrackDataItem);return propertyTrackDataItem.GetValueWithResultMode()}let mode=propertyTrack.GetInterpolationMode();if(mode==="default")mode="continuous";if(propertyTrack.GetPropertyType()==="combo")mode="discrete";if(mode==="discrete")return start.GetValueWithResultMode();else if(mode==="continuous"||mode==="step"){if(mode===
-"step"){const step=propertyTrack.GetTimeline().GetStep();if(step!==0){const s=1/step;time=Math.floor(time*s)/s}}const st=start.GetTime();const et=end.GetTime();const sv=start.GetValueWithResultMode();const ev=end.GetValueWithResultMode();if(sv===ev)return sv;const n=C3.normalize(time,st,et);const e=start.GetEase();let ret;const startAddon=start.GetAddOn(0);const endAddon=end.GetAddOn(0);if(startAddon&&startAddon.GetStartEnable()&&endAddon&&endAddon.GetEndEnable()){const dt=et-st;ret=Ease.GetRuntimeEase(e)(dt*
-n,0,1,dt);ret=Ease.GetRuntimeEase("cubicbezier")(ret,sv,sv+startAddon.GetStartAnchor(),ev+endAddon.GetEndAnchor(),ev)}else ret=Ease.GetRuntimeEase(e)((et-st)*n,sv,ev-sv,et-st);if(propertyTrack.GetPropertyType()==="integer")return Math.floor(ret);return ret}}};
+"step"){const step=propertyTrack.GetTimeline().GetStep();if(step!==0){const s=1/step;time=Math.floor(time*s)/s}}const st=start.GetTime();const et=end.GetTime();const sv=start.GetValueWithResultMode();const ev=end.GetValueWithResultMode();if(sv===ev)return sv;const n=C3.normalize(time,st,et);const e=start.GetEase();let ret;const startAddon=start.GetAddOn("cubic-bezier");const endAddon=end.GetAddOn("cubic-bezier");if(startAddon&&startAddon.GetStartEnable()&&endAddon&&endAddon.GetEndEnable()){const dt=
+et-st;ret=Ease.GetRuntimeEase(e)(dt*n,0,1,dt);ret=Ease.GetRuntimeEase("cubicbezier")(ret,sv,sv+startAddon.GetStartAnchor(),ev+endAddon.GetEndAnchor(),ev)}else ret=Ease.GetRuntimeEase(e)((et-st)*n,sv,ev-sv,et-st);if(propertyTrack.GetPropertyType()==="integer")return Math.floor(ret);return ret}}};
 
 }
 
@@ -1904,7 +1904,7 @@ n,0,1,dt);ret=Ease.GetRuntimeEase("cubicbezier")(ret,sv,sv+startAddon.GetStartAn
 'use strict';const C3=self.C3;
 C3.PropertyTrackState.AngleTypeAdapter=class AngleTypeAdapter{constructor(){}static WillChange(index,source,newValue,type){let oldValue;switch(type){case "behavior":oldValue=source.GetPropertyValueByIndex(index);break;case "effect":oldValue=source[index];break;case "instance-variable":oldValue=source.GetInstanceVariableValue(index);break;case "plugin":oldValue=source.GetPropertyValueByIndex(index);break}if(oldValue===newValue)return false;return true}static Interpolate(time,start,end,propertyTrack){if(!end){let propertyTrackDataItem=
 propertyTrack.GetPropertyTrackDataItem();const propertyTrackData=propertyTrack.GetPropertyTrackData();propertyTrackDataItem=propertyTrackData.GetLastPropertyKeyframeDataItem(propertyTrackDataItem);return propertyTrackDataItem.GetValueWithResultMode()}let mode=propertyTrack.GetInterpolationMode();if(mode==="default")mode="continuous";if(propertyTrack.GetPropertyType()==="combo")mode="discrete";if(mode==="discrete")return start.GetValueWithResultMode();else if(mode==="continuous"||mode==="step"){if(mode===
-"step"){const step=propertyTrack.GetTimeline().GetStep();if(step!==0){const s=1/step;time=Math.floor(time*s)/s}}const st=start.GetTime();const et=end.GetTime();const sv=start.GetValueWithResultMode();const ev=end.GetValueWithResultMode();const angleAddon=start.GetAddOn(1);if(angleAddon){const revolutions=angleAddon.GetRevolutions();if(sv===ev&&revolutions===0)return sv;const n=C3.normalize(time,st,et);const easeFunc=self.Ease.GetRuntimeEase(start.GetEase());const easeRes=easeFunc(n,0,1,1);switch(angleAddon.GetDirection()){case "closest":return C3.angleLerp(sv,
+"step"){const step=propertyTrack.GetTimeline().GetStep();if(step!==0){const s=1/step;time=Math.floor(time*s)/s}}const st=start.GetTime();const et=end.GetTime();const sv=start.GetValueWithResultMode();const ev=end.GetValueWithResultMode();const angleAddon=start.GetAddOn("angle");if(angleAddon){const revolutions=angleAddon.GetRevolutions();if(sv===ev&&revolutions===0)return sv;const n=C3.normalize(time,st,et);const easeFunc=self.Ease.GetRuntimeEase(start.GetEase());const easeRes=easeFunc(n,0,1,1);switch(angleAddon.GetDirection()){case "closest":return C3.angleLerp(sv,
 ev,easeRes,revolutions);case "clockwise":return C3.angleLerpClockwise(sv,ev,easeRes,revolutions);case "anti-clockwise":return C3.angleLerpAntiClockwise(sv,ev,easeRes,revolutions)}}else{if(sv===ev)return sv;const n=C3.normalize(time,st,et);const easeFunc=self.Ease.GetRuntimeEase(start.GetEase());return C3.angleLerp(sv,ev,easeFunc(n,0,1,1))}}}};
 
 }
@@ -2012,11 +2012,12 @@ this._keyframeDataItems.length-1;i>=0;i--)yield this._keyframeDataItems[i]}_Save
 // timelines/data/propertyKeyframeData.js
 {
 'use strict';const C3=self.C3;const VALUE_DATA=0;const VALUE_DATA_VALUE=0;const VALUE_DATA_ABSOLUTE_VALUE=1;const VALUE_DATA_TYPE=2;const TIME=1;const EASE=2;const ENABLE=3;const ADDONS=4;
-class PropertyKeyframeDataItem{constructor(propertyKeyframeDataJson,propertyKeyframeData){this._propertyKeyframeData=propertyKeyframeData;this._value=null;this._aValue=null;this._type="";this._time=NaN;this._ease="noease";this._enable=false;this._addonData=null;if(!propertyKeyframeDataJson)return;this._value=propertyKeyframeDataJson[VALUE_DATA][VALUE_DATA_VALUE];this._aValue=propertyKeyframeDataJson[VALUE_DATA][VALUE_DATA_ABSOLUTE_VALUE];this._type=propertyKeyframeDataJson[VALUE_DATA][VALUE_DATA_TYPE];
+class PropertyKeyframeDataItem{constructor(propertyKeyframeDataJson,propertyKeyframeData){this._propertyKeyframeData=propertyKeyframeData;this._value=null;this._aValue=null;this._type="";this._time=NaN;this._ease="noease";this._enable=false;this._addonData=null;this._addonInstance=undefined;if(!propertyKeyframeDataJson)return;this._value=propertyKeyframeDataJson[VALUE_DATA][VALUE_DATA_VALUE];this._aValue=propertyKeyframeDataJson[VALUE_DATA][VALUE_DATA_ABSOLUTE_VALUE];this._type=propertyKeyframeDataJson[VALUE_DATA][VALUE_DATA_TYPE];
 this._time=propertyKeyframeDataJson[TIME];this._ease=propertyKeyframeDataJson[EASE];this._enable=!!propertyKeyframeDataJson[ENABLE];this._addonData=null;if(!!propertyKeyframeDataJson[ADDONS])this._addonData=new C3.AddonData(propertyKeyframeDataJson[ADDONS],this);this._next=null}Release(){this._propertyKeyframeData=null;if(this._addonData){this._addonData.Release();this._addonData=null}}GetAddonData(){return this._addonData}SetNext(next){this._next=next}GetNext(){return this._next}GetValue(){return this._value}SetValue(value){if(this._type===
 "color"&&C3.IsFiniteNumber(value)){this._value[0]=C3.GetRValue(value);this._value[1]=C3.GetGValue(value);this._value[2]=C3.GetBValue(value)}else this._value=value}GetAbsoluteValue(){return this._aValue}SetAbsoluteValue(aValue){if(this._type==="color"&&C3.IsFiniteNumber(aValue)){this._aValue[0]=C3.GetRValue(aValue);this._aValue[1]=C3.GetGValue(aValue);this._aValue[2]=C3.GetBValue(aValue)}else this._aValue=aValue}GetValueWithResultMode(){const rm=this._propertyKeyframeData.GetPropertyTrackDataItem().GetResultMode();
-if(rm==="relative")return this.GetValue();else if(rm==="absolute")return this.GetAbsoluteValue()}GetType(){return this._type}SetType(t){this._type=t}GetTime(){return this._time}SetTime(t){this._time=t;this._propertyKeyframeData._LinkPropertyKeyframeDataItems()}GetEase(){return this._ease}SetEase(e){this._ease=e}GetEnable(){return this._enable}SetEnable(e){this._enable=!!e}GetAddOn(index){if(!this._addonData)return;return this._addonData.GetAddDataItemArray()[index]}_SaveToJson(){const aData=this._addonData;
-return{"addonDataJson":aData?aData._SaveToJson():aData,"value":this._value,"aValue":this._aValue,"type":this._type,"time":this._time,"ease":this._ease,"enable":this._enable}}_LoadFromJson(o){if(!o)return;if(o["addonDataJson"])this._addonData._SetFromJson(o["addonDataJson"]);this._value=o["value"];this._aValue=o["aValue"];this._type=o["type"];this._time=o["time"];this._ease=o["ease"];this._enable=o["enable"]}}
+if(rm==="relative")return this.GetValue();else if(rm==="absolute")return this.GetAbsoluteValue()}GetType(){return this._type}SetType(t){this._type=t}GetTime(){return this._time}SetTime(t){this._time=t;this._propertyKeyframeData._LinkPropertyKeyframeDataItems()}GetEase(){return this._ease}SetEase(e){this._ease=e}GetEnable(){return this._enable}SetEnable(e){this._enable=!!e}GetAddOn(id){if(!this._addonData)return;if(this._addonInstance||this._addonInstance===null)return this._addonInstance;const addonArray=
+this._addonData.GetAddDataItemArray();if(!addonArray){this._addonInstance=null;return this._addonInstance}const len=addonArray.length;for(let i=0;i<len;i++){const addon=addonArray[i];if(addon.GetId()===id){this._addonInstance=addon;return this._addonInstance}}this._addonInstance=null;return this._addonInstance}_SaveToJson(){const aData=this._addonData;return{"addonDataJson":aData?aData._SaveToJson():aData,"value":this._value,"aValue":this._aValue,"type":this._type,"time":this._time,"ease":this._ease,
+"enable":this._enable}}_LoadFromJson(o){if(!o)return;if(o["addonDataJson"])this._addonData._SetFromJson(o["addonDataJson"]);this._value=o["value"];this._aValue=o["aValue"];this._type=o["type"];this._time=o["time"];this._ease=o["ease"];this._enable=o["enable"]}}
 C3.PropertyKeyframeData=class PropertyKeyframeData{constructor(propertyKeyframesDataJson,propertyTrackDataItem){this._propertyTrackDataItem=propertyTrackDataItem;this._propertyKeyframeDataItems=[];C3.TimelineDataManager._CreateDataItems(this._propertyKeyframeDataItems,propertyKeyframesDataJson,PropertyKeyframeDataItem,this);this._LinkPropertyKeyframeDataItems()}Release(){this._propertyTrackDataItem=null;for(const propertyKeyframeDataItem of this._propertyKeyframeDataItems)propertyKeyframeDataItem.Release();
 C3.clearArray(this._propertyKeyframeDataItems);this._propertyKeyframeDataItems=null}_LinkPropertyKeyframeDataItems(){this._propertyKeyframeDataItems.sort((first,second)=>first.GetTime()-second.GetTime());for(let i=0;i<this._propertyKeyframeDataItems.length;i++){const current=this._propertyKeyframeDataItems[i];current.SetNext(this._propertyKeyframeDataItems[i+1])}}AddEmptyPropertyKeyframeDataItem(){const propertyKeyframeDataItem=new PropertyKeyframeDataItem(null,this);this._propertyKeyframeDataItems.push(propertyKeyframeDataItem);
 this._LinkPropertyKeyframeDataItems();return propertyKeyframeDataItem}DeletePropertyKeyframeDataItems(match){for(const propertyKeyframeDataItem of this._propertyKeyframeDataItems){if(!match(propertyKeyframeDataItem))continue;const index=this._propertyKeyframeDataItems.indexOf(propertyKeyframeDataItem);if(index===-1)continue;propertyKeyframeDataItem.Release();this._propertyKeyframeDataItems.splice(index,1)}this.SortPropertyKeyFrameDataItems();this._LinkPropertyKeyframeDataItems()}SortPropertyKeyFrameDataItems(){this._propertyKeyframeDataItems.sort((a,
@@ -2073,8 +2074,8 @@ propertyTrack.GetSourceAdapter()}return tween}}};
 'use strict';const C3=self.C3;
 C3.TweenTrackState=class TweenTrack extends C3.TrackState{constructor(timeline,trackDataItem){super(timeline,trackDataItem);this._firstPropertyTrack=null;this._secondPropertyTrack=null}static Create(timeline,trackDataItem){return C3.New(C3.TweenTrackState,timeline,trackDataItem)}_CachePropertyTracks(){if(this._propertyTracks.length===1)this._firstPropertyTrack=this._propertyTracks[0];else{this._firstPropertyTrack=this._propertyTracks[0];this._secondPropertyTrack=this._propertyTracks[1]}}CreatePropertyTrackStates(){for(const propertyTrackDataItem of this._trackDataItem.GetPropertyTrackData().propertyTrackDataItems())this._propertyTracks.push(C3.TweenPropertyTrackState.Create(this,propertyTrackDataItem));
 this._CachePropertyTracks()}AddPropertyTrack(){const propertyTrackData=this._trackDataItem.GetPropertyTrackData();const propertyTrackDataItem=propertyTrackData.AddEmptyPropertyTrackDataItem();const propertyTrack=C3.TweenPropertyTrackState.Create(this,propertyTrackDataItem);this._propertyTracks.push(propertyTrack);this._CachePropertyTracks();return propertyTrack}BeforeInterpolate(){}Interpolate(time,isTicking=false,setTime=false,ensureValue=false,firstTick=false,ignoreGlobals=false){if(!this._instance)this.GetInstance();
-if(!this._instance)return;const instanceValid=!this._instance.IsDestroyed();if(!instanceValid)return false;if(ignoreGlobals&&this.GetObjectClass().IsGlobal())return false;if(this._secondPropertyTrack){this._firstPropertyTrack.Interpolate(time,setTime,false,ensureValue);this._secondPropertyTrack.Interpolate(time,setTime,false,ensureValue)}else this._firstPropertyTrack.Interpolate(time,setTime,false,ensureValue);if(this._firstPropertyTrack.GetWorldInfoChange()!==0){if(!this._worldInfo)this._worldInfo=
-this._instance.GetWorldInfo();if(this._worldInfo)this._worldInfo.SetBboxChanged()}}AfterInterpolate(){}_LoadFromJson(o){super._LoadFromJson(o);this._CachePropertyTracks()}};
+if(!this._instance)return;const instanceValid=!this._instance.IsDestroyed();if(!instanceValid)return false;if(ignoreGlobals&&this.GetObjectClass().IsGlobal())return false;if(this._secondPropertyTrack){this._firstPropertyTrack.Interpolate(time,setTime,ensureValue);this._secondPropertyTrack.Interpolate(time,setTime,ensureValue)}else this._firstPropertyTrack.Interpolate(time,setTime,ensureValue);if(this._firstPropertyTrack.GetWorldInfoChange()!==0){if(!this._worldInfo)this._worldInfo=this._instance.GetWorldInfo();
+if(this._worldInfo)this._worldInfo.SetBboxChanged()}}AfterInterpolate(){}_LoadFromJson(o){super._LoadFromJson(o);this._CachePropertyTracks()}};
 
 }
 
@@ -3032,8 +3033,8 @@ this._gpuTimeStartFrame=this._gpuTimeEndFrame;this._gpuTimeEndFrame=0}_AddWebGPU
 resolve});return this._snapshotPromise}_MaybeTakeSnapshot(){if(!this._snapshotFormat)return;let canvas=this._canvas;const snapArea=this._snapshotArea;const x=C3.clamp(Math.floor(snapArea.getLeft()),0,canvas.width);const y=C3.clamp(Math.floor(snapArea.getTop()),0,canvas.height);let w=snapArea.width();if(w===0)w=canvas.width-x;else w=C3.clamp(Math.floor(w),0,canvas.width-x);let h=snapArea.height();if(h===0)h=canvas.height-y;else h=C3.clamp(Math.floor(h),0,canvas.height-y);if((x!==0||y!==0||w!==canvas.width||
 h!==canvas.height)&&(w>0&&h>0)){canvas=C3.CreateCanvas(w,h);const ctx=canvas.getContext("2d");ctx.drawImage(this._canvas,x,y,w,h,0,0,w,h)}C3.CanvasToBlob(canvas,this._snapshotFormat,this._snapshotQuality).then(blob=>{this._snapshotUrl=URL.createObjectURL(blob);this._snapshotPromise=null;this._snapshotResolve(this._snapshotUrl)});this._snapshotFormat="";this._snapshotQuality=1}GetCanvasSnapshotUrl(){return this._snapshotUrl}SetIsPastingToDrawingCanvas(p){if(p)this._isPastingToDrawingCanvas++;else this._isPastingToDrawingCanvas--}IsPastingToDrawingCanvas(){return this._isPastingToDrawingCanvas>
 0}InitLoadingScreen(loaderStyle){if(!this._webglRenderer)return;if(loaderStyle===2){this._percentText=C3.New(C3.Gfx.RendererText,this.GetRenderer());this._percentText.SetIsAsync(false);this._percentText.SetFontName("Arial");this._percentText.SetFontSize(16);this._percentText.SetHorizontalAlignment("center");this._percentText.SetVerticalAlignment("center");this._percentText.SetSize(PERCENTTEXT_WIDTH,PERCENTTEXT_HEIGHT)}else if(loaderStyle===0){const loadingLogoAsset=this._runtime.GetLoadingLogoAsset();
-if(loadingLogoAsset)loadingLogoAsset.LoadStaticTexture(this._webglRenderer).catch(err=>console.warn(`[C3 runtime] Failed to create texture for loading logo: `,err))}else if(loaderStyle===4){this._LoadSvgSplashImage("splash-images/splash-logo.svg").then(tex=>{if(this._splashState==="done")this._webglRenderer.DeleteTexture(tex);else this._splashTextures.logo=tex}).catch(err=>console.warn("Failed to load splash image: ",err));this._LoadBitmapSplashImage("splash-images/splash-poweredby-512.png").then(tex=>
-{if(this._splashState==="done")this._webglRenderer.DeleteTexture(tex);else this._splashTextures.powered=tex}).catch(err=>console.warn("Failed to load splash image: ",err));this._LoadBitmapSplashImage("splash-images/splash-website-512.png").then(tex=>{if(this._splashState==="done")this._webglRenderer.DeleteTexture(tex);else this._splashTextures.website=tex}).catch(err=>console.warn("Failed to load splash image: ",err))}}async _LoadSvgSplashImage(url){url=(new URL(url,this._runtime.GetBaseURL())).toString();
+if(loadingLogoAsset)loadingLogoAsset.LoadStaticTexture(this._webglRenderer).catch(err=>console.warn(`[C3 runtime] Failed to create texture for loading logo: `,err))}else if(loaderStyle===4){this._LoadSvgSplashImage("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxNzAwLjc5MDA0cHgiIGhlaWdodD0iMTcwMC43OTAwNHB4IiB2aWV3Qm94PSIyODcgMzE3IDExMjUgMTEyNSINCgkgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTcwMC43OTAwNCAxNzAwLjc5MDA0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnIGlkPSJsb2dvIj4NCgk8Zz4NCgkJPGc+DQoJCQk8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iI0ZGRkZGRiIgZD0iTTM1NC45Nzc1NCwxMTk1LjYyMzA1DQoJCQkJYzExLjM4NDc3LDAsMjIuMDEyNywzLjIzNzMsMzEuMDE3NTgsOC44Mzc4OWMxLjk0NjI5LDEuMjEwOTQsMi41ODQ5NiwzLjc0OTAyLDEuNDM4NDgsNS43MzQzOGwtNC45MzI2Miw4LjU0MTk5DQoJCQkJYy0zLjI3ODMyLDUuNjc5NjktMTAuMDMzMiw4LjM3Njk1LTE2LjMxNzM4LDYuNTAwOThjLTIuNzY0NjUtMC44MjUyLTUuNjkzMzYtMS4yNjg1NS04LjcyNjU2LTEuMjY4NTUNCgkJCQljLTE2LjgyOTEsMC0zMC40NzI2NiwxMy42NDM1NS0zMC40NzI2NiwzMC40NzI2NmMwLDE2LjgyODEzLDEzLjY0MzU1LDMwLjQ3MjY2LDMwLjQ3MjY2LDMwLjQ3MjY2DQoJCQkJYzMuMDMzMiwwLDUuOTYxOTEtMC40NDMzNiw4LjcyNjU2LTEuMjY4NTVjNi4yOTQ5Mi0xLjg3OTg4LDEzLjAzMzIsMC44MTE1MiwxNi4zMTczOCw2LjUwMDk4bDQuOTMxNjQsOC41NDE5OQ0KCQkJCWMxLjE0NzQ2LDEuOTg4MjgsMC41MTA3NCw0LjUyMzQ0LTEuNDM4NDgsNS43MzQzOGMtOS4wMDM5MSw1LjYwMTU2LTE5LjYzMTg0LDguODM3ODktMzEuMDE2Niw4LjgzNzg5DQoJCQkJYy0zMi40ODUzNSwwLTU4LjgxOTM0LTI2LjMzNDk2LTU4LjgxOTM0LTU4LjgxOTM0QzI5Ni4xNTgyLDEyMjEuOTU3MDMsMzIyLjQ5MjE5LDExOTUuNjIzMDUsMzU0Ljk3NzU0LDExOTUuNjIzMDUNCgkJCQlMMzU0Ljk3NzU0LDExOTUuNjIzMDV6IE03MDMuMjE0ODQsMTI1OS4xNzU3OGMtMTQuNTU5NTctOS44MTczOC0yMC4yMDMxMy0yMC4wMzIyMy0yMC4yMDMxMy0zMy4wODAwOA0KCQkJCWMwLTE4LjQ4OTI2LDE1LjcxNDg0LTI5Ljc2MzY3LDM4LjI2NjYtMjkuNzYzNjdjOS42NTcyMywwLDE4LjcyMTY4LDIuNTQyOTcsMjYuNTU5NTcsNi45OTQxNA0KCQkJCWMyLjA0OTgsMS4xNjQwNiwyLjc2MTcyLDMuNzgzMiwxLjU4MzAxLDUuODI0MjJsLTMuNDE3OTcsNS45MTk5MmMtMy4yNDcwNyw1LjYyNDAyLTkuOTA4Miw4LjMzMTA1LTE2LjE1MzMyLDYuNTQ4ODMNCgkJCQljLTIuNzIzNjMtMC43NzYzNy01LjU5ODYzLTEuMTkyMzgtOC41NzEyOS0xLjE5MjM4Yy0xMC40OTAyMywwLTExLjU5ODYzLDkuNTc2MTctNC44NTc0MiwxNC4xMjMwNWwyMy42ODY1MiwxNS45NzY1Ng0KCQkJCWM5Ljk5MDIzLDYuNzM4MjgsMTUuODk1NTEsMTcuMDY2NDEsMTUuODk1NTEsMjguNzE4NzVjMCwxOC43ODYxMy0xNS4wMDY4NCwzMy4zMDc2Mi0zOC4yNjc1OCwzMy4zMDc2Mg0KCQkJCWMtOS41MjI0NiwwLTE4LjU4Nzg5LTEuOTU3MDMtMjYuODE1NDMtNS40OTAyM2MtNy43ODEyNS0zLjMzOTg0LTEwLjkzMzU5LTEyLjc4MjIzLTYuNjk3MjctMjAuMTE4MTZsMy40ODczLTYuMDQxOTkNCgkJCQljMS4yMTM4Ny0yLjA5OTYxLDMuOTMxNjQtMi43NTk3Nyw1Ljk3NDYxLTEuNDU2MDVjNi44NTkzOCw0LjM4MjgxLDE2LjQ5MDIzLDcuNTk0NzMsMjQuNzU4NzksNy41OTQ3Mw0KCQkJCWMxMC41NDU5LDAsMTEuMzI4MTMtOS45NTg5OCwzLjc2NzU4LTE1LjA1NzYyTDcwMy4yMTQ4NCwxMjU5LjE3NTc4TDcwMy4yMTQ4NCwxMjU5LjE3NTc4eiBNOTg0LjYzMDg2LDEyMDIuMDAwOTgNCgkJCQljMC0yLjM0NzY2LDEuOTAzMzItNC4yNTE5NSw0LjI1MTk1LTQuMjUxOTVoOS45MjE4OGM3LjgyNzE1LDAsMTQuMTcyODUsNi4zNDU3LDE0LjE3Mjg1LDE0LjE3MzgzdjU3LjQwMTM3DQoJCQkJYzAsOC42MTAzNSw2Ljk4MDQ3LDE1LjU5MDgyLDE1LjU5MDgyLDE1LjU5MDgyczE1LjU5MDgyLTYuOTgwNDcsMTUuNTkwODItMTUuNTkwODJ2LTU3LjQwMTM3DQoJCQkJYzAtNy44MjgxMyw2LjM0NTctMTQuMTczODMsMTQuMTcyODUtMTQuMTczODNoOS45MjA5YzIuMzQ4NjMsMCw0LjI1MTk1LDEuOTA0Myw0LjI1MTk1LDQuMjUxOTV2NjcuMzIzMjQNCgkJCQljMCwyNC4yNjU2My0xOS42NzA5LDQzLjkzNzUtNDMuOTM2NTIsNDMuOTM3NXMtNDMuOTM3NS0xOS42NzE4OC00My45Mzc1LTQzLjkzNzVWMTIwMi4wMDA5OEw5ODQuNjMwODYsMTIwMi4wMDA5OHoNCgkJCQkgTTQ2Ni44NjkxNCwxMTk1LjYyMzA1YzMyLjQ4NDM4LDAsNTguODE4MzYsMjYuMzMzOTgsNTguODE4MzYsNTguODE5MzRjMCwzMi40ODQzOC0yNi4zMzM5OCw1OC44MTkzNC01OC44MTgzNiw1OC44MTkzNA0KCQkJCWMtMzIuNDg2MzMsMC01OC44MTkzNC0yNi4zMzQ5Ni01OC44MTkzNC01OC44MTkzNEM0MDguMDQ5OCwxMjIxLjk1NzAzLDQzNC4zODI4MSwxMTk1LjYyMzA1LDQ2Ni44NjkxNCwxMTk1LjYyMzA1DQoJCQkJTDQ2Ni44NjkxNCwxMTk1LjYyMzA1eiBNNDY2Ljg2OTE0LDEyMjUuMDMzMmMtMTYuMjQzMTYsMC0yOS40MTAxNiwxMy4xNjY5OS0yOS40MTAxNiwyOS40MDkxOA0KCQkJCXMxMy4xNjY5OSwyOS40MDgyLDI5LjQxMDE2LDI5LjQwODJjMTYuMjQxMjEsMCwyOS40MDgyLTEzLjE2NjAyLDI5LjQwODItMjkuNDA4MlM0ODMuMTEwMzUsMTIyNS4wMzMyLDQ2Ni44NjkxNCwxMjI1LjAzMzINCgkJCQlMNDY2Ljg2OTE0LDEyMjUuMDMzMnogTTU1Ni43MzI0MiwxMzExLjEzNDc3Yy0yLjM0NzY2LDAtNC4yNTE5NS0xLjkwMjM0LTQuMjUxOTUtNC4yNXYtOTQuOTYxOTENCgkJCQljMC03LjgyODEzLDYuMzQ1Ny0xNC4xNzM4MywxNC4xNzM4My0xNC4xNzM4M2gzLjk1ODk4YzQuNjI1LDAsOC45NTg5OCwyLjI1Njg0LDExLjYxMTMzLDYuMDQ1OWw0MS4xMjIwNyw1OC43NDcwN3YtNTAuNjE5MTQNCgkJCQljMC03LjgyODEzLDYuMzQ1Ny0xNC4xNzM4MywxNC4xNzI4NS0xNC4xNzM4M2g5LjkyMTg4YzIuMzQ3NjYsMCw0LjI1MTk1LDEuOTA0Myw0LjI1MTk1LDQuMjUxOTV2OTQuOTYwOTQNCgkJCQljMCw3LjgyOTEtNi4zNDU3LDE0LjE3Mjg1LTE0LjE3MzgzLDE0LjE3Mjg1aC0zLjk1ODk4Yy00LjYyNSwwLTguOTU4OTgtMi4yNTU4Ni0xMS42MTEzMy02LjA0NDkybC00MS4xMjIwNy01OC43NDYwOXY1MC42MTgxNg0KCQkJCWMwLDcuODI5MS02LjM0NTcsMTQuMTcyODUtMTQuMTcyODUsMTQuMTcyODVINTU2LjczMjQyTDU1Ni43MzI0MiwxMzExLjEzNDc3eiBNMTIxNS4wMjA1MSwxMjExLjkyMjg1DQoJCQkJYzAtNy44MjgxMyw2LjM0NTctMTQuMTczODMsMTQuMTcyODUtMTQuMTczODNoNTAuMzE1NDNjMi4zNDg2MywwLDQuMjUxOTUsMS45MDQzLDQuMjUxOTUsNC4yNTE5NXY1LjY2OTkyDQoJCQkJYzAsNy44MjcxNS02LjM0NTcsMTQuMTcyODUtMTQuMTcyODUsMTQuMTcyODVoLTYuMDI0NDF2NzUuMTE4MTZjMCw3LjgyOTEtNi4zNDU3LDE0LjE3Mjg1LTE0LjE3Mjg1LDE0LjE3Mjg1aC05LjkyMTg4DQoJCQkJYy0yLjM0ODYzLDAtNC4yNTE5NS0xLjkwMjM0LTQuMjUxOTUtNC4yNXYtODUuMDQxMDJoLTE1Ljk0NDM0Yy0yLjM0ODYzLDAtNC4yNTE5NS0xLjkwMzMyLTQuMjUxOTUtNC4yNTE5NVYxMjExLjkyMjg1DQoJCQkJTDEyMTUuMDIwNTEsMTIxMS45MjI4NXogTTc3Ni40NDkyMiwxMjExLjkyMjg1YzAtNy44MjgxMyw2LjM0NTctMTQuMTczODMsMTQuMTczODMtMTQuMTczODNoNTAuMzE0NDUNCgkJCQljMi4zNDk2MSwwLDQuMjUxOTUsMS45MDQzLDQuMjUxOTUsNC4yNTE5NXY1LjY2OTkyYzAsNy44MjcxNS02LjM0NTcsMTQuMTcyODUtMTQuMTcxODgsMTQuMTcyODVoLTYuMDI1Mzl2NzUuMTE4MTYNCgkJCQljMCw3LjgyOTEtNi4zNDU3LDE0LjE3Mjg1LTE0LjE3Mjg1LDE0LjE3Mjg1aC05LjkyMDljLTIuMzQ5NjEsMC00LjI1MTk1LTEuOTAyMzQtNC4yNTE5NS00LjI1di04NS4wNDEwMmgtMTUuOTQ1MzENCgkJCQljLTIuMzQ3NjYsMC00LjI1MTk1LTEuOTAzMzItNC4yNTE5NS00LjI1MTk1VjEyMTEuOTIyODVMNzc2LjQ0OTIyLDEyMTEuOTIyODV6IE05MjkuNjA0NDksMTI3Mi4wMjI0NmwyNi45NTgwMSwzMi4xMjc5Mw0KCQkJCWMyLjMxNDQ1LDIuNzU3ODEsMC4zNDM3NSw2Ljk4NDM4LTMuMjU2ODQsNi45ODQzOGgtMTkuNzA1MDhjLTQuMTg5NDUsMC04LjE2NTA0LTEuODUxNTYtMTAuODU3NDItNS4wNjA1NWwtMjIuNjgxNjQtMjcuMDMxMjUNCgkJCQl2MjcuODQxOGMwLDIuMzQ3NjYtMS45MDMzMiw0LjI1LTQuMjUxOTUsNC4yNWgtOS45MjA5Yy03LjgyNzE1LDAtMTQuMTcyODUtNi4zNDM3NS0xNC4xNzI4NS0xNC4xNzI4NXYtODUuMDM5MDYNCgkJCQljMC03LjgyODEzLDYuMzQ1Ny0xNC4xNzM4MywxNC4xNzI4NS0xNC4xNzM4M2gyOS43NjM2N2MyMi43MDAyLDAsNDEuMTAyNTQsMTcuMTMzNzksNDEuMTAyNTQsMzguMjY4NTUNCgkJCQlDOTU2Ljc1NDg4LDEyNTIuNTkwODIsOTQ1LjQzNjUyLDEyNjYuNzAyMTUsOTI5LjYwNDQ5LDEyNzIuMDIyNDZMOTI5LjYwNDQ5LDEyNzIuMDIyNDZ6IE05MDAuMDYxNTIsMTIyMS44NDM3NXYzMi41OTg2M2g4LjUwMzkxDQoJCQkJYzEwLjk1ODk4LDAsMTkuODQyNzctNy4yOTc4NSwxOS44NDI3Ny0xNi4yOTg4M2MwLTkuMDAxOTUtOC44ODM3OS0xNi4yOTk4LTE5Ljg0Mjc3LTE2LjI5OThIOTAwLjA2MTUyTDkwMC4wNjE1MiwxMjIxLjg0Mzc1eg0KCQkJCSBNMTE1OC4zNTkzOCwxMTk1LjYyMzA1YzExLjM4NDc3LDAsMjIuMDEyNywzLjIzNzMsMzEuMDE3NTgsOC44Mzc4OWMxLjk0NzI3LDEuMjEwOTQsMi41ODQ5NiwzLjc0OTAyLDEuNDM4NDgsNS43MzQzOA0KCQkJCWwtNC45MzI2Miw4LjU0MTk5Yy0zLjI3ODMyLDUuNjc5NjktMTAuMDMzMiw4LjM3Njk1LTE2LjMxNzM4LDYuNTAwOThjLTIuNzY0NjUtMC44MjUyLTUuNjkzMzYtMS4yNjg1NS04LjcyNTU5LTEuMjY4NTUNCgkJCQljLTE2LjgyOTEsMC0zMC40NzI2NiwxMy42NDM1NS0zMC40NzI2NiwzMC40NzI2NmMwLDE2LjgyODEzLDEzLjY0MzU1LDMwLjQ3MjY2LDMwLjQ3MjY2LDMwLjQ3MjY2DQoJCQkJYzMuMDMyMjMsMCw1Ljk2MDk0LTAuNDQzMzYsOC43MjU1OS0xLjI2ODU1YzYuMjk1OS0xLjg3OTg4LDEzLjAzMzIsMC44MTE1MiwxNi4zMTgzNiw2LjUwMDk4bDQuOTMwNjYsOC41NDE5OQ0KCQkJCWMxLjE0NzQ2LDEuOTg4MjgsMC41MTA3NCw0LjUyMzQ0LTEuNDM3NSw1LjczNDM4Yy05LjAwNDg4LDUuNjAxNTYtMTkuNjMyODEsOC44Mzc4OS0zMS4wMTc1OCw4LjgzNzg5DQoJCQkJYy0zMi40ODUzNSwwLTU4LjgxOTM0LTI2LjMzNDk2LTU4LjgxOTM0LTU4LjgxOTM0QzEwOTkuNTQwMDQsMTIyMS45NTcwMywxMTI1Ljg3NDAyLDExOTUuNjIzMDUsMTE1OC4zNTkzOCwxMTk1LjYyMzA1eiIvPg0KCQkJPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMwMEZGREEiIGQ9Ik0xMzE4LjE5NzI3LDEyMDYuMDMyMjMNCgkJCQljMC03LjgyODEzLDYuMzQ1Ny0xNC4xNzM4MywxNC4xNzI4NS0xNC4xNzM4M2MyMC42NTYyNSwwLDQxLjMxMjUsMCw2MS45Njg3NSwwYzMuNDI5NjksMCw1LjQ1MDIsMy44ODA4NiwzLjQ4MzQsNi42OTA0Mw0KCQkJCWwtMTkuMjk2ODgsMjcuNTY3MzhjMTUuNTQyOTcsOC4zNzU5OCwyNi4xMDY0NSwyNC44MDA3OCwyNi4xMDY0NSw0My42OTUzMWMwLDI3LjM5NzQ2LTIyLjIwODk4LDQ5LjYwNjQ1LTQ5LjYwNjQ1LDQ5LjYwNjQ1DQoJCQkJYy0xNi42ODg0OCwwLTMxLjQ1MTE3LTguMjQwMjMtNDAuNDQzMzYtMjAuODc1OThjLTEuNDUwMi0yLjAzOTA2LTAuODMxMDUtNC44OTk0MSwxLjMzNTk0LTYuMTUyMzRsMTAuOTc3NTQtNi4zMzc4OQ0KCQkJCWM0Ljg4MTg0LTIuODE4MzYsMTAuOTc5NDktMi40NzU1OSwxNS41MTQ2NSwwLjg3MzA1YzMuNTI4MzIsMi42MDU0Nyw3Ljg5MTYsNC4xNDY0OCwxMi42MTUyMyw0LjE0NjQ4DQoJCQkJYzExLjc0MjE5LDAsMjEuMjU5NzctOS41MTg1NSwyMS4yNTk3Ny0yMS4yNTk3N3MtOS41MTc1OC0yMS4yNTk3Ny0yMS4yNTk3Ny0yMS4yNTk3N2gtMTUuMjE3NzcNCgkJCQljLTMuNDI5NjksMC01LjQ1MDItMy44ODA4Ni0zLjQ4NDM4LTYuNjkwNDNsMTguMTM1NzQtMjUuOTA4MmgtMzIuMDA5NzdjLTIuMzQ4NjMsMC00LjI1MTk1LTEuOTAzMzItNC4yNTE5NS00LjI1MTk1VjEyMDYuMDMyMjN6DQoJCQkJIi8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8Zz4NCgkJCQk8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iI0RBRThGNyIgZD0iTTg1MC4zOTU1MSw4NTcuNTkxOA0KCQkJCQljLTUwLjM1NjQ1LDAtOTQuMzI1Mi0yNy4zNTY0NS0xMTcuODUyNTQtNjguMDIwNTFsLTgwLjAzMDI3LDQ2LjIwNDFjLTQuNjU1MjcsMi42ODk0NS02LjEzMTg0LDguNzE4NzUtMy4yNDkwMiwxMy4yNTU4Ng0KCQkJCQljNDIuMjM3Myw2Ni40ODYzMywxMTYuNTMzMiwxMTAuNjA3NDIsMjAxLjEzMTg0LDExMC42MDc0MmM4OC4xMjU5OCwwLDE2NS4wNzEyOS00Ny44NzUsMjA2LjI0MzE2LTExOS4wMzYxM2wtODAuNDg3My00Ni40Njk3Mw0KCQkJCQljLTQuMzEzNDgtMi40OTAyMy05LjgwMTc2LTEuMjA1MDgtMTIuNTcwMzEsMi45MzU1NUM5MzkuMTc1NzgsODMzLjU2MjUsODk3LjU5MTgsODU3LjU5MTgsODUwLjM5NTUxLDg1Ny41OTE4DQoJCQkJCUw4NTAuMzk1NTEsODU3LjU5MTh6IE0xMTM2LjcyMTY4LDU1Ni4yMTc3N2M0LjYxNDI2LTIuNjYzMDksNi4xMTAzNS04LjYxOTE0LDMuMzEyNS0xMy4xNTEzNw0KCQkJCQljLTU5LjkxNTA0LTk3LjAzMDI3LTE2Ny4yMjQ2MS0xNjEuNjk0MzQtMjg5LjYzODY3LTE2MS42OTQzNGMtMTI1Ljg5MzU1LDAtMjM1LjgxMzQ4LDY4LjM5MjU4LTI5NC42MzM3OSwxNzAuMDQ5OA0KCQkJCQlsODAuMzc2OTUsNDYuNDA2MjVjNC4zOTc0NiwyLjUzOTA2LDEwLjAwMTk1LDEuMTQ5NDEsMTIuNzEwOTQtMy4xNDU1MQ0KCQkJCQljNDIuMTY0MDYtNjYuODUxNTYsMTE2LjY2ODk1LTExMS4yNjM2NywyMDEuNTQ1OS0xMTEuMjYzNjdjODguMTI1OTgsMCwxNjUuMDcxMjksNDcuODc1OTgsMjA2LjI0MzE2LDExOS4wMzYxMw0KCQkJCQlMMTEzNi43MjE2OCw1NTYuMjE3Nzd6Ii8+DQoJCQkJPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiNBNUJBQzgiIGQ9Ik04NTAuMzk1NTEsOTU5LjYzODY3DQoJCQkJCWMtODQuNTk4NjMsMC0xNTguODk0NTMtNDQuMTIxMDktMjAxLjEzMTg0LTExMC42MDc0MmMtMi44NzY5NS00LjUzMDI3LTEuMzk5NDEtMTAuNTcwMzEsMy4yNDkwMi0xMy4yNTU4Nmw4MC4wMzAyNy00Ni4yMDQxDQoJCQkJCWMtMTEuNTgxMDUtMjAuMDE2Ni0xOC4yMDk5Ni00My4yNTQ4OC0xOC4yMDk5Ni02OC4wNDE5OWMwLTc0Ljc4NTE2LDYwLjU1NzYyLTEzNi4wNjI1LDEzNi4wNjI1LTEzNi4wNjI1DQoJCQkJCWM0Ny4xOTYyOSwwLDg4Ljc4MDI3LDI0LjAyOTMsMTEzLjE4NTU1LDYwLjUyMjQ2YzIuNzY0NjUsNC4xMzM3OSw4LjI2MzY3LDUuNDIxODgsMTIuNTcwMzEsMi45MzU1NWw4MC40ODczLTQ2LjQ2OTczDQoJCQkJCWMtNDEuMTcxODgtNzEuMTYwMTYtMTE4LjExNzE5LTExOS4wMzYxMy0yMDYuMjQzMTYtMTE5LjAzNjEzYy04NC44NzY5NSwwLTE1OS4zODE4NCw0NC40MTIxMS0yMDEuNTQ1OSwxMTEuMjYzNjcNCgkJCQkJYy0yLjcwNjA1LDQuMjkxMDItOC4zMTgzNiw1LjY4MTY0LTEyLjcxMDk0LDMuMTQ1NTFsLTgwLjM3Njk1LTQ2LjQwNjI1DQoJCQkJCWMtMjguOTUyMTUsNTAuMDQwMDQtNDUuNTIzNDQsMTA4LjEzOTY1LTQ1LjUyMzQ0LDE3MC4xMDc0MmMwLDE4Ni45NjM4NywxNTEuMzk0NTMsMzQwLjE1NzIzLDM0MC4xNTcyMywzNDAuMTU3MjMNCgkJCQkJYzEyMi40MTQwNiwwLDIyOS43MjM2My02NC42NjQwNiwyODkuNjM4NjctMTYxLjY5NTMxYzIuNzk0OTItNC41MjYzNywxLjI5NDkyLTEwLjQ5MDIzLTMuMzEyNS0xMy4xNTEzN2wtODAuMDgzMDEtNDYuMjM3Mw0KCQkJCQlDMTAxNS40NjY4LDkxMS43NjM2Nyw5MzguNTIxNDgsOTU5LjYzODY3LDg1MC4zOTU1MSw5NTkuNjM4Njd6Ii8+DQoJCQk8L2c+DQoJCQk8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzAwRkZEQSIgZD0iTTExMzcuMTg1NTUsNzU4LjExMzI4di03My4xNjc5N2wtNjMuMzY1MjMsMzYuNTgzOTgNCgkJCQlMMTEzNy4xODU1NSw3NTguMTEzMjhMMTEzNy4xODU1NSw3NTguMTEzMjh6IE0xMDI2LjU3NjE3LDcwNS4xNjQwNmwxMjAuMDU4NTktNjkuMzE2NDENCgkJCQljMTIuNTY4MzYtNy4yNTU4NiwyOC4zNDQ3MywxLjg1MjU0LDI4LjM0NTcsMTYuMzY2MjF2MTM4LjYzMDg2Yy0wLjAwMDk4LDE0LjUxMjctMTUuNzc3MzQsMjMuNjIyMDctMjguMzQ1NywxNi4zNjYyMQ0KCQkJCWwtMTIwLjA1ODU5LTY5LjMxNjQxQzEwMTQuMDI4MzIsNzMwLjY0OTQxLDEwMTQuMDI4MzIsNzEyLjQwOTE4LDEwMjYuNTc2MTcsNzA1LjE2NDA2eiIvPg0KCQk8L2c+DQoJPC9nPg0KPC9nPg0KPC9zdmc+DQo=").then(tex=>{if(this._splashState==="done")this._webglRenderer.DeleteTexture(tex);else this._splashTextures.logo=tex}).catch(err=>console.warn("Failed to load splash image: ",err));this._LoadBitmapSplashImage("data:image/png;base64,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").then(tex=>
+{if(this._splashState==="done")this._webglRenderer.DeleteTexture(tex);else this._splashTextures.powered=tex}).catch(err=>console.warn("Failed to load splash image: ",err));this._LoadBitmapSplashImage("data:image/png;base64,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").then(tex=>{if(this._splashState==="done")this._webglRenderer.DeleteTexture(tex);else this._splashTextures.website=tex}).catch(err=>console.warn("Failed to load splash image: ",err))}}async _LoadSvgSplashImage(url){url=(new URL(url,this._runtime.GetBaseURL())).toString();
 const blob=await C3.FetchBlob(url);const drawable=await this._runtime.RasterSvgImage(blob,2048,2048);return await this._webglRenderer.CreateStaticTextureAsync(drawable,{mipMapQuality:"high"})}async _LoadBitmapSplashImage(url){url=(new URL(url,this._runtime.GetBaseURL())).toString();const blob=await C3.FetchBlob(url);return await this._webglRenderer.CreateStaticTextureAsync(blob,{mipMapQuality:"high"})}HideCordovaSplashScreen(){this._runtime.PostComponentMessageToDOM("runtime","hide-cordova-splash")}StartLoadingScreen(){this._loaderStartTime=
 Date.now();this._runtime.Dispatcher().addEventListener("loadingprogress",this._loadingprogress_handler);this._rafId=requestAnimationFrame(()=>this._DrawLoadingScreen());const loaderStyle=this._runtime.GetLoaderStyle();if(loaderStyle!==3)this.HideCordovaSplashScreen()}async EndLoadingScreen(){if(!this._webglRenderer)return;this._loadingProgress=1;const loaderStyle=this._runtime.GetLoaderStyle();if(loaderStyle===4)await this._splashDonePromise;this._splashDoneResolve=null;this._splashDonePromise=null;
 if(this._rafId!==-1){cancelAnimationFrame(this._rafId);this._rafId=-1}this._runtime.Dispatcher().removeEventListener("loadingprogress",this._loadingprogress_handler);this._loadingprogress_handler=null;if(this._percentText){this._percentText.Release();this._percentText=null}this._runtime.ReleaseLoadingLogoAsset();this._webglRenderer.Start();if(this._splashTextures.logo){this._webglRenderer.DeleteTexture(this._splashTextures.logo);this._splashTextures.logo=null}if(this._splashTextures.powered){this._webglRenderer.DeleteTexture(this._splashTextures.powered);
@@ -7096,57 +7097,6 @@ timeline.GetTrackById(valueTrackNameOrId);if(track){const propertyTrack=track.Ge
 }
 
 {
-'use strict';const C3=self.C3;C3.Plugins.NinePatch=class NinePatchPlugin extends C3.SDKPluginBase{constructor(opts){super(opts)}Release(){super.Release()}};
-
-}
-
-{
-'use strict';const C3=self.C3;
-C3.Plugins.NinePatch.Type=class NinePatchType extends C3.SDKTypeBase{constructor(objectClass){super(objectClass);this._textureSet=null;this._drawable=null}Release(){this.ReleaseTextures();super.Release()}OnCreate(){this.GetImageInfo().LoadAsset(this._runtime)}async LoadTextures(renderer){const imageInfo=this.GetImageInfo();this._drawable=await imageInfo.ExtractImageToCanvas()}CreatePatch(lm,rm,tm,bm){if(this._textureSet||!this._drawable)return;this._textureSet=new self.NinePatchTextureSet(this);this._textureSet.CreateTextures(this._drawable,
-lm,rm,tm,bm)}ReleaseTextures(){if(this._textureSet){this._textureSet.Release();this._textureSet=null}}GetTextureSet(){return this._textureSet}};
-
-}
-
-{
-'use strict';const C3=self.C3;const LEFT_MARGIN=0;const RIGHT_MARGIN=1;const TOP_MARGIN=2;const BOTTOM_MARGIN=3;const EDGES=4;const FILL=5;const INITIALLY_VISIBLE=6;const ORIGIN=7;const SEAMS=8;const tempRect1=C3.New(C3.Rect);const tempRect2=C3.New(C3.Rect);const tempQuad=C3.New(C3.Quad);
-C3.Plugins.NinePatch.Instance=class NinePatchInstance extends C3.SDKWorldInstanceBase{constructor(inst,properties){super(inst);this._leftMargin=16;this._rightMargin=16;this._topMargin=16;this._bottomMargin=16;this._edges=1;this._fill=1;this._isSeamless=true;this._callback3d=null;if(properties){this._leftMargin=properties[LEFT_MARGIN];this._rightMargin=properties[RIGHT_MARGIN];this._topMargin=properties[TOP_MARGIN];this._bottomMargin=properties[BOTTOM_MARGIN];this._edges=properties[EDGES];this._fill=
-properties[FILL];this._isSeamless=!!properties[SEAMS];this.GetWorldInfo().SetVisible(!!properties[INITIALLY_VISIBLE])}this._sdkType.CreatePatch(this._leftMargin,this._rightMargin,this._topMargin,this._bottomMargin)}Release(){super.Release()}_Set3DCallback(cb){this._callback3d=cb}Draw(renderer){const wi=this.GetWorldInfo();const bquad=wi.GetBoundingQuad();this._Draw(renderer,bquad.getTlx(),bquad.getTly(),wi.GetWidth(),wi.GetHeight())}_Draw(renderer,myx,myy,myw,myh){let textureSet=this._sdkType.GetTextureSet();
-if(!textureSet){this._sdkType.CreatePatch(this._leftMargin,this._rightMargin,this._topMargin,this._bottomMargin);textureSet=this._sdkType.GetTextureSet();if(!textureSet)return}const lm=this._leftMargin;const rm=this._rightMargin;const tm=this._topMargin;const bm=this._bottomMargin;const iw=textureSet.GetImageWidth();const ih=textureSet.GetImageHeight();const re=iw-rm;const be=ih-bm;const s=this._isSeamless?1:0;const edges=this._edges;const fill=this._fill;if(lm>0&&tm>0)this._DrawPatch(renderer,textureSet.GetTexture(),
-0,0,lm+s,tm+s,myx,myy,lm+s,tm+s);if(rm>0&&tm>0)this._DrawPatch(renderer,textureSet.GetTexture(),re-s,0,rm+s,tm+s,myx+myw-rm-s,myy,rm+s,tm+s);if(rm>0&&bm>0)this._DrawPatch(renderer,textureSet.GetTexture(),re-s,be-s,rm+s,bm+s,myx+myw-rm-s,myy+myh-bm-s,rm+s,bm+s);if(lm>0&&bm>0)this._DrawPatch(renderer,textureSet.GetTexture(),0,be-s,lm+s,bm+s,myx,myy+myh-bm-s,lm+s,bm+s);if(edges===0){const off=fill===2?0:s;if(lm>0&&be>tm)this._TilePatch(renderer,textureSet.GetLeftTexture(),myx,myy+tm,lm+off,myh-tm-bm,
-0,0);if(rm>0&&be>tm)this._TilePatch(renderer,textureSet.GetRightTexture(),myx+myw-rm-off,myy+tm,rm+off,myh-tm-bm,off,0);if(tm>0&&re>lm)this._TilePatch(renderer,textureSet.GetTopTexture(),myx+lm,myy,myw-lm-rm,tm+off,0,0);if(bm>0&&re>lm)this._TilePatch(renderer,textureSet.GetBottomTexture(),myx+lm,myy+myh-bm-off,myw-lm-rm,bm+off,0,off)}else if(edges===1){if(lm>0&&be>tm)this._DrawPatch(renderer,textureSet.GetTexture(),0,tm,lm,be-tm,myx,myy+tm,lm,myh-tm-bm);if(rm>0&&be>tm)this._DrawPatch(renderer,textureSet.GetTexture(),
-re,tm,rm,be-tm,myx+myw-rm,myy+tm,rm,myh-tm-bm);if(tm>0&&re>lm)this._DrawPatch(renderer,textureSet.GetTexture(),lm,0,re-lm,tm,myx+lm,myy,myw-lm-rm,tm);if(bm>0&&re>lm)this._DrawPatch(renderer,textureSet.GetTexture(),lm,be,re-lm,bm,myx+lm,myy+myh-bm,myw-lm-rm,bm)}if(be>tm&&re>lm)if(fill===0)this._TilePatch(renderer,textureSet.GetFillTexture(),myx+lm,myy+tm,myw-lm-rm,myh-tm-bm,0,0);else if(fill===1)this._DrawPatch(renderer,textureSet.GetTexture(),lm,tm,re-lm,be-tm,myx+lm,myy+tm,myw-lm-rm,myh-tm-bm)}_DrawPatch(renderer,
-tex,sx,sy,sw,sh,dx,dy,dw,dh){const texW=tex.GetWidth();const texH=tex.GetHeight();renderer.SetTexture(tex);tempRect1.set(dx,dy,dx+dw,dy+dh);tempRect2.set(sx/texW,sy/texH,(sx+sw)/texW,(sy+sh)/texH);if(this._callback3d===null){const wi=this.GetWorldInfo();const bquad=wi.GetBoundingQuad();const offX=bquad.getTlx();const offY=bquad.getTly();tempRect1.offset(-offX,-offY);tempQuad.setFromRotatedRect(tempRect1,wi.GetAngle());tempQuad.offset(offX,offY);renderer.Quad3(tempQuad,tempRect2)}else this._callback3d(tempRect1,
-tempRect2)}_TilePatch(renderer,tex,dx,dy,dw,dh,ox,oy){const texW=tex.GetWidth();const texH=tex.GetHeight();renderer.SetTexture(tex);tempRect1.set(dx,dy,dx+dw,dy+dh);tempRect2.set(-ox/texW,-oy/texH,(dw-ox)/texW,(dh-oy)/texH);if(this._callback3d===null){const wi=this.GetWorldInfo();const bquad=wi.GetBoundingQuad();const offX=bquad.getTlx();const offY=bquad.getTly();tempRect1.offset(-offX,-offY);tempQuad.setFromRotatedRect(tempRect1,wi.GetAngle());tempQuad.offset(offX,offY);renderer.Quad3(tempQuad,tempRect2)}else this._callback3d(tempRect1,
-tempRect2)}GetCurrentImageInfo(){this._objectClass.GetImageInfo()}GetPropertyValueByIndex(index){}SetPropertyValueByIndex(index,value){}};
-
-}
-
-{
-'use strict';const C3=self.C3;C3.Plugins.NinePatch.Cnds={};
-
-}
-
-{
-'use strict';const C3=self.C3;C3.Plugins.NinePatch.Acts={SetEffect(effect){this.GetWorldInfo().SetBlendMode(effect);this._runtime.UpdateRender()}};
-
-}
-
-{
-'use strict';const C3=self.C3;C3.Plugins.NinePatch.Exps={};
-
-}
-
-{
-'use strict';const C3=self.C3;function CloneDrawable(drawable){const canvas=C3.CreateCanvas(drawable.width,drawable.height);const ctx=canvas.getContext("2d");ctx.drawImage(drawable,0,0);return canvas}
-self.NinePatchTextureSet=class NinePatchTextureSet{constructor(sdkType){this._sdkType=sdkType;this._runtime=this._sdkType.GetRuntime();this._texture=null;this._fillTexture=null;this._leftTexture=null;this._rightTexture=null;this._topTexture=null;this._bottomTexture=null;this._imageWidth=0;this._imageHeight=0;this._renderer=this._runtime.GetRenderer();this._isLoading=false;this._wasReleased=false}Release(){if(!this._renderer.IsContextLost()){this._renderer.DeleteTexture(this._texture);this._renderer.DeleteTexture(this._fillTexture);
-this._renderer.DeleteTexture(this._leftTexture);this._renderer.DeleteTexture(this._rightTexture);this._renderer.DeleteTexture(this._topTexture);this._renderer.DeleteTexture(this._bottomTexture)}this._texture=null;this._fillTexture=null;this._leftTexture=null;this._rightTexture=null;this._topTexture=null;this._bottomTexture=null;this._sdkType=null;this._renderer=null;this._wasReleased=true}WasReleased(){return this._wasReleased}CreateTextures(drawable,lm,rm,tm,bm){this._SliceImage(drawable,lm,rm,tm,
-bm)}HasCreatedTextures(){return!!this._texture}_SliceImage(drawable,lm,rm,tm,bm){if(this._wasReleased)return;const iw=drawable.width;const ih=drawable.height;this._imageWidth=iw;this._imageHeight=ih;const re=iw-rm;const be=ih-bm;const sampling=this._runtime.GetSampling();const anisotropy=this._runtime.GetCanvasManager().GetTextureAnisotropy();this._texture=this._renderer.CreateStaticTexture(CloneDrawable(drawable),{sampling,anisotropy});if(re>lm&&be>tm)this._fillTexture=this._renderer.CreateStaticTexture(this._SliceSubImage(CloneDrawable(drawable),
-lm,tm,re,be),{wrapX:"repeat",wrapY:"repeat",sampling,anisotropy});if(lm>0&&be>tm)this._leftTexture=this._renderer.CreateStaticTexture(this._SliceSubImage(CloneDrawable(drawable),0,tm,lm,be),{wrapY:"repeat",sampling,anisotropy});if(rm>0&&be>tm)this._rightTexture=this._renderer.CreateStaticTexture(this._SliceSubImage(CloneDrawable(drawable),re,tm,iw,be),{wrapY:"repeat",sampling,anisotropy});if(tm>0&&re>lm)this._topTexture=this._renderer.CreateStaticTexture(this._SliceSubImage(CloneDrawable(drawable),
-lm,0,re,tm),{wrapX:"repeat",sampling,anisotropy});if(bm>0&&re>lm)this._bottomTexture=this._renderer.CreateStaticTexture(this._SliceSubImage(CloneDrawable(drawable),lm,be,re,ih),{wrapX:"repeat",sampling,anisotropy})}_SliceSubImage(drawable,x1,y1,x2,y2){const w=x2-x1;const h=y2-y1;const tmpCanvas=C3.CreateCanvas(w,h);const tmpCtx=tmpCanvas.getContext("2d");tmpCtx.drawImage(drawable,x1,y1,w,h,0,0,w,h);return tmpCanvas}GetImageWidth(){return this._imageWidth}GetImageHeight(){return this._imageHeight}GetTexture(){return this._texture}GetFillTexture(){return this._fillTexture}GetLeftTexture(){return this._leftTexture}GetRightTexture(){return this._rightTexture}GetTopTexture(){return this._topTexture}GetBottomTexture(){return this._bottomTexture}};
-
-}
-
-{
 'use strict';const C3=self.C3;C3.Behaviors.Anchor=class AnchorBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
 
 }
@@ -7310,19 +7260,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Keyboard,
 		C3.Plugins.Timeline,
 		C3.Plugins.ValerypopoffTouchPlusPlugin,
-		C3.Plugins.NinePatch,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.System.Acts.SetLayerVisible,
 		C3.Plugins.System.Cnds.ForEach,
 		C3.Plugins.Sprite.Acts.SetAnim,
-		C3.Plugins.System.Cnds.Compare,
-		C3.Plugins.Sprite.Exps.Count,
-		C3.Plugins.System.Cnds.For,
-		C3.Plugins.System.Acts.CreateObject,
-		C3.Plugins.System.Exps.loopindex,
-		C3.Plugins.Sprite.Acts.Spawn,
-		C3.Plugins.Text.Acts.SetText,
-		C3.Plugins.Sprite.Acts.MoveToTop,
 		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.System.Exps.dt,
@@ -7332,18 +7273,18 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
-		C3.Plugins.System.Cnds.LayerVisible,
 		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
+		C3.Plugins.Eponesh_GameScore.Acts.SocialsJoinCommunity,
+		C3.Plugins.Browser.Acts.GoToURLWindow,
+		C3.Plugins.System.Cnds.Else,
+		C3.Plugins.System.Cnds.LayerVisible,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Acts.GoToLayoutByName,
-		C3.Plugins.System.Cnds.Else,
 		C3.Plugins.Sprite.Cnds.IsOverlapping,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.Sprite.Exps.IID,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.Browser.Acts.Alert,
-		C3.Plugins.System.Acts.ToggleBoolVar,
-		C3.Plugins.LocalStorage.Acts.SetItem,
 		C3.Plugins.LocalStorage.Cnds.IsProcessingGets,
 		C3.Plugins.LocalStorage.Cnds.IsProcessingSets,
 		C3.Plugins.Sprite.Acts.SetVisible,
@@ -7352,33 +7293,37 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.LocalStorage.Cnds.OnItemExists,
 		C3.Plugins.LocalStorage.Acts.GetItem,
 		C3.Plugins.LocalStorage.Cnds.OnItemMissing,
+		C3.Plugins.LocalStorage.Acts.SetItem,
 		C3.Plugins.LocalStorage.Cnds.OnItemGet,
 		C3.Plugins.LocalStorage.Exps.ItemValue,
 		C3.Plugins.Arr.Exps.AsJSON,
 		C3.Plugins.Arr.Acts.JSONLoad,
+		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.AJAX.Cnds.OnComplete,
 		C3.Plugins.AJAX.Exps.LastData,
+		C3.Plugins.System.Exps.min,
 		C3.Plugins.Arr.Exps.At,
+		C3.Plugins.Sprite.Acts.SetPosToObject,
 		C3.Plugins.Sprite.Acts.SetInstanceVar,
-		C3.Plugins.System.Acts.ResetGlobals,
-		C3.Plugins.LocalStorage.Acts.ClearStorage,
-		C3.Plugins.System.Cnds.PickLastCreated,
-		C3.Plugins.System.Exps.max,
-		C3.Plugins.Sprite.Exps.Y,
-		C3.Plugins.Sprite.Exps.Height,
-		C3.Plugins.System.Acts.Scroll,
+		C3.Plugins.Text.Acts.SetText,
+		C3.Plugins.Text.Acts.SetPosToObject,
+		C3.Plugins.System.Cnds.For,
+		C3.Plugins.System.Exps.layerindex,
+		C3.Plugins.System.Exps.loopindex,
+		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
 		C3.Plugins.Sprite.Acts.AddChild,
+		C3.Plugins.Sprite.Exps.Count,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Text.Acts.Destroy,
 		C3.Plugins.System.Acts.RestartLayout,
 		C3.Plugins.Arr.Exps.Width,
-		C3.Plugins.Sprite.Exps.Width,
-		C3.Plugins.System.Acts.AddVar,
-		C3.Plugins.System.Acts.SubVar,
-		C3.Plugins.Sprite.Cnds.PickNthChild,
+		C3.Plugins.Sprite.Acts.Spawn,
+		C3.Plugins.Sprite.Exps.LayerName,
 		C3.Plugins.Dictionary.Exps.Get,
-		C3.Plugins.Sprite.Acts.ZMoveToObject,
+		C3.Plugins.Sprite.Acts.MoveToTop,
+		C3.Plugins.Sprite.Acts.SetScale,
 		C3.Plugins.Dictionary.Acts.JSONLoad,
+		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.Arr.Acts.SetSize,
 		C3.Plugins.Arr.Exps.Height,
 		C3.Plugins.Arr.Cnds.ArrForEach,
@@ -7387,11 +7332,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Arr.Exps.CurX,
 		C3.Plugins.Arr.Exps.CurY,
 		C3.Plugins.Arr.Exps.CurValue,
-		C3.Plugins.Sprite.Acts.MoveToBottom,
-		C3.Plugins.Sprite.Cnds.PickParent,
+		C3.Plugins.System.Acts.CreateObject,
+		C3.Plugins.System.Cnds.PickLastCreated,
 		C3.Behaviors.Tween.Cnds.IsAnyPlaying,
-		C3.Plugins.Sprite.Exps.ChildCount,
 		C3.Plugins.System.Cnds.PickByComparison,
+		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Sprite.Exps.ImagePointY,
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Sprite.Exps.ImagePointX,
@@ -7399,7 +7344,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.StopLoop,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Behaviors.Tween.Acts.TweenValue,
-		C3.Plugins.Sprite.Acts.SetPosToObject,
 		C3.Plugins.Arr.Cnds.CompareXY,
 		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
@@ -7411,19 +7355,20 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.IsVisible,
 		C3.Plugins.System.Cnds.CompareBetween,
 		C3.Plugins.System.Acts.SetFunctionReturnValue,
-		C3.Plugins.NinePatch.Acts.SetWidth,
+		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.Audio.Cnds.IsTagPlaying,
 		C3.Plugins.Audio.Acts.Play,
 		C3.Plugins.Audio.Acts.Stop,
 		C3.Plugins.Keyboard.Cnds.OnKey,
+		C3.Plugins.System.Acts.ToggleBoolVar,
+		C3.Plugins.System.Acts.ResetGlobals,
+		C3.Plugins.LocalStorage.Acts.ClearStorage,
 		C3.Plugins.LocalStorage.Cnds.OnCleared,
-		C3.Plugins.Sprite.Exps.LayerName,
 		C3.Plugins.Touch.Cnds.IsTouchingObject,
 		C3.Plugins.Mouse.Cnds.IsOverObject,
 		C3.Plugins.Audio.Acts.PlayByName,
 		C3.Plugins.System.Exps.viewportwidth,
-		C3.Plugins.System.Exps.scrolly,
 		C3.Plugins.System.Exps.viewportheight,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
 		C3.Plugins.Timeline.Acts.PlayTimelineByName,
@@ -7432,6 +7377,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Touch.Exps.Y,
 		C3.Plugins.Touch.Cnds.OnTouchEnd,
 		C3.Plugins.System.Exps.scrollx,
+		C3.Plugins.System.Exps.scrolly,
+		C3.Plugins.System.Acts.Scroll,
 		C3.Plugins.Touch.Cnds.IsInTouch,
 		C3.Plugins.Mouse.Cnds.OnWheel,
 		C3.Plugins.System.Acts.SetGroupActive
@@ -7444,7 +7391,6 @@ self.C3_JsPropNameTable = [
 	{LocalStorage: 0},
 	{AnimationPrefix: 0},
 	{MainBut: 0},
-	{GameName: 0},
 	{Mouse: 0},
 	{Anchor: 0},
 	{BackToMainBut: 0},
@@ -7476,7 +7422,6 @@ self.C3_JsPropNameTable = [
 	{GameScore: 0},
 	{Audio: 0},
 	{LvlStars: 0},
-	{Blueprint2: 0},
 	{Screens: 0},
 	{CurScreen: 0},
 	{IntroBtn: 0},
@@ -7489,22 +7434,32 @@ self.C3_JsPropNameTable = [
 	{LvlComplete: 0},
 	{SettBut: 0},
 	{SettingsDesc: 0},
-	{ResetBut: 0},
 	{TouchPlus: 0},
 	{RestartBut: 0},
 	{MovesText: 0},
-	{Bar: 0},
-	{BarBack: 0},
-	{Star: 0},
+	{MenuBack: 0},
+	{AboutPopup: 0},
+	{SettBack: 0},
+	{ShopBack: 0},
+	{RemoveAds: 0},
+	{LvlBack: 0},
+	{LvlPaginator: 0},
+	{SoundBut: 0},
+	{TopPanel: 0},
+	{SurePopup: 0},
 	{Buttons: 0},
 	{AvailableLevels: 0},
 	{UnlockedLvl: 0},
 	{SelectedLvl: 0},
+	{LvlPage: 0},
 	{AfterLoad: 0},
+	{tmp: 0},
+	{LayerToShow: 0},
 	{Moves: 0},
 	{FileLoad: 0},
 	{BottleMargin: 0},
 	{ItemUID: 0},
+	{Speed: 0},
 	{ItemFromBottle: 0},
 	{ViewportCenterY: 0},
 	{Columns: 0},
@@ -7650,33 +7605,15 @@ self.C3_ExpressionFuncs = [
 			return () => (n0.ExpInstVar() + "Idle");
 		},
 		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject();
-		},
-		() => 0,
-		() => "LvlButtons",
-		() => 49,
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (33 + ((f0("LvlButtons") % 5) * 133));
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (33 + (Math.floor((f0("LvlButtons") / 5)) * 150));
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0("LvlButtons") + 1);
-		},
-		() => 1,
-		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0();
 		},
+		() => 0,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((v0.GetValue()) ? ("On") : ("Off"));
 		},
+		() => 1,
 		() => 2,
 		() => "Stars",
 		() => "UnlockedLvl",
@@ -7685,6 +7622,13 @@ self.C3_ExpressionFuncs = [
 		() => "SFX",
 		() => "ExtraAnim",
 		() => "MainButtons",
+		() => "VK",
+		() => "https://vk.com/casketwithgames",
+		() => "NewWindow",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpInstVar();
+		},
 		() => "Play",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
@@ -7692,11 +7636,11 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const v0 = p._GetNode(0).GetVar();
-			return () => ((((v0.GetValue()) === (1) ? 1 : 0)) ? ("Intro") : ("Main"));
+			return () => ((((v0.GetValue()) === (1) ? 1 : 0)) ? ("Main") : ("Main"));
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			return () => n0.ExpInstVar();
+			return () => n0.ExpObject();
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -7708,124 +7652,75 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const n0 = p._GetNode(0);
 			const v1 = p._GetNode(1).GetVar();
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			const n4 = p._GetNode(4);
-			const n5 = p._GetNode(5);
-			const n6 = p._GetNode(6);
-			const n7 = p._GetNode(7);
-			const n8 = p._GetNode(8);
-			const n9 = p._GetNode(9);
-			return () => and("Stars", ((((n0.ExpObject()) >= ((v1.GetValue() - 1)) ? 1 : 0)) ? (0) : (((((n2.ExpObject(n3.ExpObject(), 0)) >= (n4.ExpObject(n5.ExpObject())) ? 1 : 0)) ? (3) : (((((n6.ExpObject(n7.ExpObject(), 1)) >= (n8.ExpObject(n9.ExpObject())) ? 1 : 0)) ? (2) : (1)))))));
+			return () => (n0.ExpObject() + (v1.GetValue() * 9));
 		},
 		p => {
-			const n0 = p._GetNode(0);
-			const v1 = p._GetNode(1).GetVar();
-			return () => ((((n0.ExpObject()) < (v1.GetValue()) ? 1 : 0)) ? ("") : ("Locked"));
-		},
-		() => 360,
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
+			const v0 = p._GetNode(0).GetVar();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const v2 = p._GetNode(2).GetVar();
 			const n3 = p._GetNode(3);
 			const v4 = p._GetNode(4).GetVar();
-			const v5 = p._GetNode(5).GetVar();
-			return () => f0((((((n1.ExpObject() + n2.ExpObject()) + n3.ExpObject()) + 60) - v4.GetValue()) + 180), v5.GetValue());
+			const n5 = p._GetNode(5);
+			const v6 = p._GetNode(6).GetVar();
+			const n7 = p._GetNode(7);
+			const v8 = p._GetNode(8).GetVar();
+			const n9 = p._GetNode(9);
+			const v10 = p._GetNode(10).GetVar();
+			return () => and("Stars", ((((v0.GetValue()) >= (f1((v2.GetValue() - 1), (50 - 1))) ? 1 : 0)) ? (0) : (((((n3.ExpObject(v4.GetValue(), 0)) >= (n5.ExpObject(v6.GetValue())) ? 1 : 0)) ? (3) : (((((n7.ExpObject(v8.GetValue(), 1)) >= (n9.ExpObject(v10.GetValue())) ? 1 : 0)) ? (2) : (1)))))));
 		},
-		() => "Pause",
-		() => "Lvls",
-		() => "Dict",
-		() => 720,
-		() => "Pause Menu",
-		() => "",
-		() => "Un",
+		() => "ForStars",
 		p => {
-			const n0 = p._GetNode(0);
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			return () => ((((n0.ExpObject((n1.ExpObject() - 1), 1)) === (0) ? 1 : 0)) ? (3) : (n2.ExpObject((n3.ExpObject() - 1), 1)));
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => ((((v0.GetValue()) < (v1.GetValue()) ? 1 : 0)) ? ("") : ("Locked"));
 		},
 		p => {
-			const n0 = p._GetNode(0);
-			const n1 = p._GetNode(1);
+			const v0 = p._GetNode(0).GetVar();
+			const f1 = p._GetNode(1).GetBoundMethod();
 			const v2 = p._GetNode(2).GetVar();
 			const v3 = p._GetNode(3).GetVar();
-			return () => Math.ceil(divide(n0.ExpObject((n1.ExpObject() - 1), 0, v2.GetValue()), v3.GetValue()));
+			return () => ((((v0.GetValue()) > (f1((v2.GetValue() - 1), (50 - 1))) ? 1 : 0)) ? ("") : ((v3.GetValue() + 1)));
+		},
+		() => "Layers",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0("MainScreen");
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			const v4 = p._GetNode(4).GetVar();
-			const v5 = p._GetNode(5).GetVar();
-			return () => ((720 - (f0(n1.ExpObject(), n2.ExpObject(), n3.ExpObject()) * v4.GetValue())) / (v5.GetValue() + 1));
+			return () => (f0("LoadTrigger") - 1);
 		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0("Layers");
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const v1 = p._GetNode(1).GetVar();
+			return () => f0(v1.GetValue());
+		},
+		() => "Фича еще не готова. Если что-то произошло до этого сообщения, то вам повезло!",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const n1 = p._GetNode(1);
+			return () => C3.clamp((v0.GetValue() + (((1 - n1.ExpObject()) * 2) - 1)), 0, (Math.ceil((50 / 9)) - 1));
+		},
+		() => "Pause",
+		() => "SureMenu",
+		() => "Lvls",
+		() => "Dict",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => ((or(v0.GetValue(), v1.GetValue())) ? ("On") : ("Off"));
+		},
+		() => "Pause Menu",
 		() => "Bottles",
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			const v2 = p._GetNode(2).GetVar();
 			return () => subtract(n0.ExpObject((n1.ExpObject() - 1), 0, v2.GetValue()), 1);
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			return () => (f0(n1.ExpObject(), n2.ExpObject(), n3.ExpObject()) / 2);
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			const n4 = p._GetNode(4);
-			const f5 = p._GetNode(5).GetBoundMethod();
-			const v6 = p._GetNode(6).GetVar();
-			return () => ((v0.GetValue() + f1(n2.ExpObject(), n3.ExpObject(), n4.ExpObject())) * (f5("Bottles") % v6.GetValue()));
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const n2 = p._GetNode(2);
-			const v3 = p._GetNode(3).GetVar();
-			return () => multiply(multiply(n0.ExpObject(f1("Bottles"), 0), n2.ExpObject()), (v3.GetValue() / 2));
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			const v1 = p._GetNode(1).GetVar();
-			return () => (n0.ExpObject() * Math.floor(((v1.GetValue() + 1) / 2)));
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			const v2 = p._GetNode(2).GetVar();
-			return () => (((((v0.GetValue()) > (111) ? 1 : 0)) ? (111) : (v1.GetValue())) * ((v2.GetValue() - 1) / 2));
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			const v1 = p._GetNode(1).GetVar();
-			return () => (n0.ExpObject() * Math.floor((v1.GetValue() / 2)));
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const v1 = p._GetNode(1).GetVar();
-			const n2 = p._GetNode(2);
-			const f3 = p._GetNode(3).GetBoundMethod();
-			const n4 = p._GetNode(4);
-			const n5 = p._GetNode(5);
-			const v6 = p._GetNode(6).GetVar();
-			const v7 = p._GetNode(7).GetVar();
-			const n8 = p._GetNode(8);
-			return () => multiply(Math.floor((f0("Bottles") / v1.GetValue())), add(add(add(multiply(n2.ExpObject(f3("Bottles"), 0), n4.ExpObject()), n5.ExpObject()), ((((v6.GetValue()) > (111) ? 1 : 0)) ? (111) : (v7.GetValue()))), n8.ExpObject()));
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => n0.ExpObject(f1("Bottles"), 0);
 		},
 		() => "Items",
 		p => {
@@ -7843,9 +7738,12 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0("Items") - 2);
+			return () => f0("Bottles");
 		},
-		() => "Middle",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => and("Item", (f0("Items") - 1));
+		},
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
@@ -7854,6 +7752,7 @@ self.C3_ExpressionFuncs = [
 			const v4 = p._GetNode(4).GetVar();
 			return () => n0.ExpObject((n1.ExpObject(f2("Bottles"), f3("Items"), v4.GetValue())).toString());
 		},
+		() => 0.75,
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
@@ -7865,50 +7764,13 @@ self.C3_ExpressionFuncs = [
 			return () => subtract(multiply(n0.ExpObject((n1.ExpObject() - 1), 0), 2), 1);
 		},
 		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			const n4 = p._GetNode(4);
-			const f5 = p._GetNode(5).GetBoundMethod();
-			const n6 = p._GetNode(6);
-			const n7 = p._GetNode(7);
-			const v8 = p._GetNode(8).GetVar();
-			return () => multiply((v0.GetValue() + f1(n2.ExpObject(), n3.ExpObject(), n4.ExpObject())), mod(subtract(f5("Bottles"), n6.ExpObject((n7.ExpObject() - 1), 0)), v8.GetValue()));
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const n2 = p._GetNode(2);
-			const n3 = p._GetNode(3);
-			const n4 = p._GetNode(4);
-			const v5 = p._GetNode(5).GetVar();
-			return () => multiply(multiply(n0.ExpObject(subtract(f1("Bottles"), n2.ExpObject((n3.ExpObject() - 1), 0)), 0), n4.ExpObject()), (v5.GetValue() / 2));
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			return () => (v0.GetValue() * ((v1.GetValue() - 1) / 2));
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			const v3 = p._GetNode(3).GetVar();
-			const n4 = p._GetNode(4);
-			const f5 = p._GetNode(5).GetBoundMethod();
-			const n6 = p._GetNode(6);
-			const n7 = p._GetNode(7);
-			const n8 = p._GetNode(8);
-			const n9 = p._GetNode(9);
-			const v10 = p._GetNode(10).GetVar();
-			const n11 = p._GetNode(11);
-			return () => multiply(Math.floor(divide(subtract(f0("Bottles"), n1.ExpObject((n2.ExpObject() - 1), 0)), v3.GetValue())), add(add(add(multiply(n4.ExpObject(subtract(f5("Bottles"), n6.ExpObject((n7.ExpObject() - 1), 0)), 0), n8.ExpObject()), n9.ExpObject()), v10.GetValue()), n11.ExpObject()));
-		},
-		p => {
 			const n0 = p._GetNode(0);
 			const f1 = p._GetNode(1).GetBoundMethod();
 			return () => add(n0.ExpObject(f1("Bottles"), 0), 1);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0("Bottles") - 3);
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -7921,7 +7783,7 @@ self.C3_ExpressionFuncs = [
 			const n1 = p._GetNode(1);
 			const f2 = p._GetNode(2).GetBoundMethod();
 			const f3 = p._GetNode(3).GetBoundMethod();
-			return () => n0.ExpObject((n1.ExpObject(f2("Bottles"), f3("Items"))).toString());
+			return () => and(n0.ExpObject((n1.ExpObject(f2("Bottles"), f3("Items"))).toString()), "s");
 		},
 		p => {
 			const v0 = p._GetNode(0).GetVar();
@@ -7946,47 +7808,53 @@ self.C3_ExpressionFuncs = [
 			return () => n0.ExpObject((n1.ExpObject() - 1), 0);
 		},
 		() => "Pick",
+		() => 3,
 		p => {
 			const n0 = p._GetNode(0);
-			return () => (n0.ExpObject() - 2);
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0("Pick");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("Middle");
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => n0.ExpObject(and("Item", f1("Pick")));
 		},
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			const f2 = p._GetNode(2).GetBoundMethod();
-			return () => n0.ExpObject(n1.ExpObject(), (f2("Pick") + 2));
+			return () => n0.ExpObject(n1.ExpObject(), (f2("Pick") + 1));
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0("Pick") + 2);
+			return () => (f0("Pick") + 1);
 		},
 		() => "UpItem",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject("Above");
 		},
-		() => 0.1,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (0.1 * v0.GetValue());
+		},
 		() => "Cooldown",
 		() => "Above",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0("Pick") + 1);
+			return () => f0("Pick");
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0("Pick") + 3);
+			return () => (f0("Pick") + 2);
 		},
-		() => 0.2,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (0.2 * v0.GetValue());
+		},
 		() => "Down1Item",
 		() => "DownItem",
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => n0.ExpObject(and("Item", n1.ExpInstVar()));
+		},
+		() => "",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpObject() + 30);
@@ -8026,6 +7894,7 @@ self.C3_ExpressionFuncs = [
 			return () => ((((v0.GetValue()) > (v1.GetValue()) ? 1 : 0)) ? (v2.GetValue()) : (v3.GetValue()));
 		},
 		() => "GUI",
+		() => 360,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((v0.GetValue()) ? (1655) : (640));
@@ -8036,7 +7905,14 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			const n1 = p._GetNode(1);
 			const v2 = p._GetNode(2).GetVar();
-			return () => (and((((and((("Уровень пройден!" + "\n") + "Потрачено: "), v0.GetValue()) + " ходов") + "\n") + "Ваш рекорд: "), n1.ExpObject((v2.GetValue() - 2))) + " ходов");
+			const v3 = p._GetNode(3).GetVar();
+			const v4 = p._GetNode(4).GetVar();
+			const n5 = p._GetNode(5);
+			const v6 = p._GetNode(6).GetVar();
+			const v7 = p._GetNode(7).GetVar();
+			const n8 = p._GetNode(8);
+			const v9 = p._GetNode(9).GetVar();
+			return () => (and(((((and("Результат: ", v0.GetValue()) + " ходов") + "\n") + "\n") + "Ваш рекорд: "), ((((n1.ExpObject((v2.GetValue() - 1))) > (v3.GetValue()) ? 1 : 0)) ? (v4.GetValue()) : (((((n5.ExpObject((v6.GetValue() - 1))) === (0) ? 1 : 0)) ? (v7.GetValue()) : (n8.ExpObject((v9.GetValue() - 1))))))) + " ходов");
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -8089,45 +7965,9 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const v0 = p._GetNode(0).GetVar();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const v2 = p._GetNode(2).GetVar();
-			return () => ((and(v0.GetValue(), "\n") + "ход") + f1(v2.GetValue()));
+			return () => and("Ходов: ", v0.GetValue());
 		},
-		p => {
-			const n0 = p._GetNode(0);
-			const v1 = p._GetNode(1).GetVar();
-			const f2 = p._GetNode(2).GetBoundMethod();
-			const n3 = p._GetNode(3);
-			const v4 = p._GetNode(4).GetVar();
-			const v5 = p._GetNode(5).GetVar();
-			const n6 = p._GetNode(6);
-			const v7 = p._GetNode(7).GetVar();
-			const n8 = p._GetNode(8);
-			const v9 = p._GetNode(9).GetVar();
-			const n10 = p._GetNode(10);
-			const v11 = p._GetNode(11).GetVar();
-			const v12 = p._GetNode(12).GetVar();
-			const n13 = p._GetNode(13);
-			const v14 = p._GetNode(14).GetVar();
-			const n15 = p._GetNode(15);
-			const v16 = p._GetNode(16).GetVar();
-			const n17 = p._GetNode(17);
-			const v18 = p._GetNode(18).GetVar();
-			const v19 = p._GetNode(19).GetVar();
-			return () => add(add(multiply(divide(110, n0.ExpObject((v1.GetValue() - 1), 0)), f2(subtract(n3.ExpObject((v4.GetValue() - 1), 0), v5.GetValue()), 0)), multiply(divide(110, subtract(n6.ExpObject((v7.GetValue() - 1), 1), n8.ExpObject((v9.GetValue() - 1), 0))), C3.clamp(subtract(n10.ExpObject((v11.GetValue() - 1), 1), v12.GetValue()), 0, subtract(n13.ExpObject((v14.GetValue() - 1), 1), n15.ExpObject((v16.GetValue() - 1), 0))))), ((110 / 10) * C3.clamp(add(subtract(n17.ExpObject((v18.GetValue() - 1), 1), v19.GetValue()), 10), 0, 10)));
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const n1 = p._GetNode(1);
-			const v2 = p._GetNode(2).GetVar();
-			return () => ((((v0.GetValue()) <= (n1.ExpObject((v2.GetValue() - 1), 0)) ? 1 : 0)) ? ("Active") : ("Lost"));
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const n1 = p._GetNode(1);
-			const v2 = p._GetNode(2).GetVar();
-			return () => ((((v0.GetValue()) <= (n1.ExpObject((v2.GetValue() - 1), 1)) ? 1 : 0)) ? ("Active") : ("Lost"));
-		},
+		() => "On",
 		() => "Click",
 		() => -10,
 		p => {
