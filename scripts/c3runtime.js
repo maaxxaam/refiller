@@ -7262,6 +7262,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.ValerypopoffTouchPlusPlugin,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.System.Acts.SetLayerVisible,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsCloseSticky,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
+		C3.Plugins.Eponesh_GameScore.Acts.PaymentsFetchProducts,
+		C3.Plugins.Browser.Acts.Alert,
+		C3.Plugins.Eponesh_GameScore.Exps.PlatformType,
 		C3.Plugins.System.Cnds.ForEach,
 		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Cnds.CompareBoolVar,
@@ -7274,6 +7279,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
+		C3.Plugins.Eponesh_GameScore.Cnds.PlatformType,
 		C3.Plugins.Eponesh_GameScore.Acts.SocialsJoinCommunity,
 		C3.Plugins.Browser.Acts.GoToURLWindow,
 		C3.Plugins.System.Cnds.Else,
@@ -7284,7 +7290,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.Sprite.Exps.IID,
 		C3.Plugins.System.Acts.GoToLayout,
-		C3.Plugins.Browser.Acts.Alert,
 		C3.Plugins.LocalStorage.Cnds.IsProcessingGets,
 		C3.Plugins.LocalStorage.Cnds.IsProcessingSets,
 		C3.Plugins.Sprite.Acts.SetVisible,
@@ -7311,10 +7316,12 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.layerindex,
 		C3.Plugins.System.Exps.loopindex,
 		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
+		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Plugins.Sprite.Acts.AddChild,
 		C3.Plugins.Sprite.Exps.Count,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Text.Acts.Destroy,
+		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenAvailable,
 		C3.Plugins.System.Acts.RestartLayout,
 		C3.Plugins.Arr.Exps.Width,
 		C3.Plugins.Sprite.Acts.Spawn,
@@ -7345,17 +7352,18 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Behaviors.Tween.Acts.TweenValue,
 		C3.Plugins.Arr.Cnds.CompareXY,
-		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
 		C3.Plugins.System.Acts.WaitForPreviousActions,
 		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Plugins.Sprite.Acts.StartAnim,
 		C3.Plugins.Arr.Acts.SetX,
+		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.LocalStorage.Cnds.OnItemSet,
 		C3.Plugins.Sprite.Cnds.IsVisible,
 		C3.Plugins.System.Cnds.CompareBetween,
 		C3.Plugins.System.Acts.SetFunctionReturnValue,
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenClose,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.Audio.Cnds.IsTagPlaying,
 		C3.Plugins.Audio.Acts.Play,
@@ -7370,6 +7378,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Audio.Acts.PlayByName,
 		C3.Plugins.System.Exps.viewportwidth,
 		C3.Plugins.System.Exps.viewportheight,
+		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenPlaying,
+		C3.Plugins.Audio.Acts.SetSilent,
+		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyAvailable,
+		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyPlaying,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsShowSticky,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
 		C3.Plugins.Timeline.Acts.PlayTimelineByName,
 		C3.Plugins.Touch.Cnds.OnTouchStart,
@@ -7455,6 +7468,7 @@ self.C3_JsPropNameTable = [
 	{AfterLoad: 0},
 	{tmp: 0},
 	{LayerToShow: 0},
+	{AdsDisabled: 0},
 	{Moves: 0},
 	{FileLoad: 0},
 	{BottleMargin: 0},
@@ -7476,6 +7490,7 @@ self.C3_JsPropNameTable = [
 	{Bad: 0},
 	{Index: 0},
 	{num: 0},
+	{TillFullscreenAd: 0},
 	{SFX: 0},
 	{ExtraAnimation: 0},
 	{Music: 0},
@@ -7601,6 +7616,10 @@ self.C3_ExpressionFuncs = [
 		() => "Settings",
 		() => "MainScreen",
 		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => ("Platform: " + f0());
+		},
+		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpInstVar() + "Idle");
 		},
@@ -7623,6 +7642,8 @@ self.C3_ExpressionFuncs = [
 		() => "ExtraAnim",
 		() => "MainButtons",
 		() => "VK",
+		() => "OK",
+		() => "YA",
 		() => "https://vk.com/casketwithgames",
 		() => "NewWindow",
 		p => {
@@ -7699,12 +7720,14 @@ self.C3_ExpressionFuncs = [
 			const v1 = p._GetNode(1).GetVar();
 			return () => f0(v1.GetValue());
 		},
+		() => "RemoveAds",
 		() => "Фича еще не готова. Если что-то произошло до этого сообщения, то вам повезло!",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const n1 = p._GetNode(1);
 			return () => C3.clamp((v0.GetValue() + (((1 - n1.ExpObject()) * 2) - 1)), 0, (Math.ceil((50 / 9)) - 1));
 		},
+		() => 84,
 		() => "Pause",
 		() => "SureMenu",
 		() => "Lvls",
@@ -7714,6 +7737,7 @@ self.C3_ExpressionFuncs = [
 			const v1 = p._GetNode(1).GetVar();
 			return () => ((or(v0.GetValue(), v1.GetValue())) ? ("On") : ("Off"));
 		},
+		() => 3,
 		() => "Pause Menu",
 		() => "Bottles",
 		p => {
@@ -7808,7 +7832,6 @@ self.C3_ExpressionFuncs = [
 			return () => n0.ExpObject((n1.ExpObject() - 1), 0);
 		},
 		() => "Pick",
-		() => 3,
 		p => {
 			const n0 = p._GetNode(0);
 			const f1 = p._GetNode(1).GetBoundMethod();
