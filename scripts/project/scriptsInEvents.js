@@ -61,7 +61,7 @@ function d2d_startProgressionEvent(name, prev_location) {
 	// Optional: Previous Progression event name 
 	// Note: Remember to always end events with ...EndProgressionEvent() functions
 	var data = {}; 
-	if (prev_location != "") data["source"] = prev_location; 
+	if (prev_location != "" && typeof(prev_location) == "string") data["source"] = prev_location; 
 	devtodev.startProgressionEvent(name, data); 
 	return "Started " + name;
 }
@@ -144,7 +144,10 @@ const scriptsInEvents = {
 
 		async Devtodev_Event12(runtime, localVars)
 		{
-			runtime.setReturnValue(d2d_quickEndProgressionEvent(localVars.name, localVars.success))
+			var succ = false;
+			if (localVars.success > 0) succ = true;
+			console.log("Succ is " + succ);
+			runtime.setReturnValue(d2d_quickEndProgressionEvent(localVars.name, succ));
 		},
 
 		async Devtodev_Event14(runtime, localVars)

@@ -7340,14 +7340,13 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.ForEach,
 		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Cnds.CompareBoolVar,
-		C3.Plugins.Browser.Acts.ConsoleLog,
-		C3.Plugins.Eponesh_GameScore.Exps.PlayerID,
-		C3.Plugins.Eponesh_GameScore.Exps.PlatformType,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.System.Exps.dt,
 		C3.Plugins.System.Cnds.PickNth,
 		C3.Plugins.AJAX.Acts.RequestFile,
-		C3.Plugins.LocalStorage.Acts.CheckItemExists,
+		C3.Plugins.Browser.Acts.ConsoleLog,
+		C3.Plugins.Eponesh_GameScore.Exps.PlayerID,
+		C3.Plugins.Eponesh_GameScore.Exps.PlatformType,
 		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
@@ -7393,6 +7392,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
 		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Plugins.Text.Acts.AppendText,
+		C3.Plugins.Sprite.Acts.SetX,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerReady,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerFetchFields,
 		C3.Plugins.System.Acts.SetGroupActive,
@@ -7737,12 +7737,6 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const f2 = p._GetNode(2).GetBoundMethod();
-			return () => f0(f1(), f2());
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0();
 		},
 		() => 0,
@@ -7753,11 +7747,12 @@ self.C3_ExpressionFuncs = [
 		() => 1,
 		() => 2,
 		() => "Stars",
-		() => "UnlockedLvl",
-		() => "LvlRatings",
-		() => "Music",
-		() => "SFX",
-		() => "ExtraAnim",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const f2 = p._GetNode(2).GetBoundMethod();
+			return () => f0(f1(), f2());
+		},
 		() => "MainButtons",
 		() => "VK",
 		() => "OK",
@@ -7790,6 +7785,11 @@ self.C3_ExpressionFuncs = [
 		() => "Уровень заблокирован. Пройдите предыдущие уровни, чтобы разблокировать этот",
 		() => "Working with Storage",
 		() => "Animation 1",
+		() => "UnlockedLvl",
+		() => "LvlRatings",
+		() => "Music",
+		() => "SFX",
+		() => "ExtraAnim",
 		p => {
 			const n0 = p._GetNode(0);
 			const v1 = p._GetNode(1).GetVar();
@@ -7850,6 +7850,7 @@ self.C3_ExpressionFuncs = [
 		() => 84,
 		() => "\n 99 YAN?",
 		() => "\n 14 голосов?",
+		() => 360,
 		() => "\n 79 ОК?",
 		() => "GameScore Storage",
 		() => "Не удалось загрузить прогресс: потеряна связь с сервером",
@@ -7886,6 +7887,7 @@ self.C3_ExpressionFuncs = [
 			return () => ((((v0.GetValue()) === (2) ? 1 : 0)) ? ("Off") : ("On"));
 		},
 		() => "Не удалось обновить прогресс: потеряно соединение с сервером. Проверьте свое интернет-соединение и повторите попытку.",
+		() => 185,
 		() => "Pause",
 		() => "SureMenu",
 		() => "Lvls",
@@ -8097,7 +8099,6 @@ self.C3_ExpressionFuncs = [
 			return () => ((((v0.GetValue()) > (v1.GetValue()) ? 1 : 0)) ? (v2.GetValue()) : (v3.GetValue()));
 		},
 		() => "GUI",
-		() => 360,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((v0.GetValue()) ? (1655) : (640));
