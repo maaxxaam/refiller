@@ -7,14 +7,10 @@ html, body {
 	color: white;
 }
 
-
-
 html, body, canvas {
 	touch-action: none;
 	touch-action-delay: none;
 }
-
-
 
 #notSupportedWrap {
 	margin: 2em auto 1em auto;
