@@ -8171,6 +8171,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.GoToLayoutByName,
 		C3.Plugins.System.Cnds.Else,
 		C3.Plugins.Browser.Acts.Alert,
+		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.AJAX.Cnds.OnComplete,
 		C3.Plugins.Arr.Acts.JSONLoad,
 		C3.Plugins.AJAX.Exps.LastData,
@@ -8282,7 +8283,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyAvailable,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsStickyStart,
 		C3.Plugins.GameAnalytics.Acts.addAdEvent,
-		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
 		C3.Plugins.Sprite.Acts.SetY,
 		C3.Plugins.Timeline.Acts.PlayTimelineByName,
@@ -8577,6 +8577,14 @@ self.C3_ExpressionFuncs = [
 			return () => ((((v0.GetValue()) === (1) ? 1 : 0)) ? ("Intro") : ("Main"));
 		},
 		() => "Уровень заблокирован. Пройдите предыдущие уровни, чтобы разблокировать этот",
+		() => "Share",
+		() => "VK",
+		() => "OK",
+		() => "YA",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpInstVar();
+		},
 		() => "Stars",
 		p => {
 			const n0 = p._GetNode(0);
@@ -8615,7 +8623,7 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0("LoadTrigger") - 1);
+			return () => f0("Shop");
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -8668,15 +8676,12 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "Не удалось обновить прогресс: потеряно соединение с сервером. Проверьте свое интернет-соединение и повторите попытку.",
 		() => 84,
-		() => "YA",
 		() => "\n 99 YAN?",
 		() => "fbc4a579b05d18e76f1732ef912912e4",
 		() => "a6cd19c04307220ae2b82887b5a460f22076fa9c",
-		() => "VK",
 		() => "\n 14 голосов?",
 		() => "61d10755c854c0e65d3dbee2fa56abe8",
 		() => "e9ef5db9ec41b5251bf57964d454e69768158c81",
-		() => "OK",
 		() => "\n 79 ОК?",
 		() => "591f87ff1a2a909ac8369fe23c94c34f",
 		() => "6501fd7796202beca39a503da8f563703b5fc586",
@@ -8955,10 +8960,6 @@ self.C3_ExpressionFuncs = [
 		() => "On",
 		() => "game_banner",
 		() => "gamescore",
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpInstVar();
-		},
 		p => {
 			const n0 = p._GetNode(0);
 			return () => ((((n0.ExpInstVar()) === (2) ? 1 : 0)) ? (275) : (655));

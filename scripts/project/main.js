@@ -46,11 +46,11 @@ async function OnBeforeProjectStart(runtime)
 	// the first layout. Loading has finished and initial
 	// instances are created and available to use here.
 
-	runtime.getLayout("Menu").addEventListener("beforelayoutstart", () => MainMenu.SetupMainButtons(runtime));
+	//runtime.getLayout("Menu").addEventListener("beforelayoutstart", () => MainMenu.SetupMainButtons(runtime));
 	
-	for (const layout of runtime.getAllLayouts()) {
-		layout.addEventListener("beforelayoutstart", () => pl.swapListener(runtime, layout.name));
-	}
+	//for (const layout of runtime.getAllLayouts()) {
+	//	layout.addEventListener("beforelayoutstart", () => pl.swapListener(runtime, layout.name));
+	//}
 	//runtime.addEventListener("afterprojectstart", () => OnAfterProjectStart(runtime));
 	//runtime.addEventListener("pointerup", e => OnPointerUpMM(e, runtime));
 	//runtime.addEventListener("tick", () => Tick(runtime));
