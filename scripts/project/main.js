@@ -30,13 +30,13 @@ runOnStartup(async runtime =>
 {
 	// Code to run on the loading screen.
 	// Note layouts, objects etc. are not yet available.
-	var link = document.createElement('style');
-	link.setAttribute('rel', 'stylesheet');
-	link.setAttribute('type', 'text/css');
-	link.innerHTML = ``
-	document.head.appendChild(link);
+	//var link = document.createElement('style');
+	//link.setAttribute('rel', 'stylesheet');
+	//link.setAttribute('type', 'text/css');
+	//link.innerHTML = ``
+	//document.head.appendChild(link);
 
-	pl = new pointerListener(runtime);
+	// pl = new pointerListener(runtime);
 	runtime.addEventListener("beforeprojectstart", () => OnBeforeProjectStart(runtime));
 });
 

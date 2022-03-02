@@ -8186,6 +8186,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.loopindex,
 		C3.Plugins.Eponesh_GameScore.Cnds.PaymentsIsPurchased,
 		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
+		C3.Plugins.GameAnalytics.Acts.addBusinessEvent,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerLoadComplete,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerFetchFields,
 		C3.Plugins.System.Acts.SetGroupActive,
@@ -8196,7 +8197,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPaymentsFetchProducts,
 		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsCloseSticky,
-		C3.Plugins.GameAnalytics.Acts.addBusinessEvent,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
 		C3.Plugins.PlatformInfo.Cnds.IsOnMobile,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsShowSticky,
@@ -8637,6 +8637,10 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "RemoveAds",
 		() => "Вы уже купили отключение рекламы. Спасибо за поддержку!",
+		() => "RUB",
+		() => 99,
+		() => "Anti-ad",
+		() => "Shop",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const n1 = p._GetNode(1);
@@ -8644,10 +8648,6 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "GameScore Storage",
 		() => "Не удалось загрузить прогресс: потеряна связь с сервером",
-		() => "RUB",
-		() => 99,
-		() => "Anti-ad",
-		() => "Shop",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0("lvlratings");
