@@ -47,3 +47,8 @@ html, body, canvas {
 	src: url('fonts/lobster.woff2') format('woff2');
 }
 
+@font-face {
+	font-family: 'eurofurence_bold';
+	src: url('fonts/eurofurence_bold.ttf') format('truetype');
+}
+
