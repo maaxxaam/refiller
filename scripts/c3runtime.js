@@ -8186,7 +8186,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.loopindex,
 		C3.Plugins.Eponesh_GameScore.Cnds.PaymentsIsPurchased,
 		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerReady,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerLoadComplete,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerFetchFields,
 		C3.Plugins.System.Acts.SetGroupActive,
 		C3.Plugins.Browser.Acts.ConsoleLog,
