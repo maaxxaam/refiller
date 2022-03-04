@@ -4007,8 +4007,11 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                     'robohash_robots',
                     'robohash_cats'
                 ],
+                order: ['default', 'DESC', 'ASC'],
                 withMe: ['none', 'first', 'last'],
                 platform: ['YANDEX', 'VK', 'NONE', 'OK', 'GAME_MONETIZE', 'CRAZY_GAMES', 'GAME_DISTRIBUTION'],
+                documentTypes: ['PLAYER_PRIVACY_POLICY'],
+                documentFormat: ['HTML', 'TXT', 'RAW'],
                 compare: [
                     (a, b) => a === b,
                     (a, b) => a !== b,
@@ -4036,9 +4039,12 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
             });
 
             this.leaderboard = [];
+            this.leaderboardInfo = {};
+            this.leaderboardRecords = {};
             this.currentLeaderboardIndex = 0;
             this.currentLeaderboardPlayer = {};
             this.lastLeaderboardTag = '';
+            this.lastLeaderboardVariant = '';
             this.lastLeaderboardPlayerRatingTag = '';
             this.leaderboardPlayerPosition = 0;
 
@@ -4134,6 +4140,14 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
             this.gamesCollectionFetchError = '';
             this.lastGamesCollectionIdOrTag = '';
 
+            this.document = {
+                type: '',
+                content: ''
+            };
+
+            this.lastDocumentType = '';
+            this.documentFetchError = '';
+
             this.projectId = Number(properties[0] || 0);
             this.publicToken = properties[1];
             this.showPreloaderOnStart = properties[2];
@@ -4207,6 +4221,11 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                     unlock: stub
                 },
                 gamesCollections: {
+                    on() {},
+                    open: stub,
+                    fetch: stub
+                },
+                documents: {
                     on() {},
                     open: stub,
                     fetch: stub
@@ -4289,6 +4308,7 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
 
         init(gs) {
             this.gs = gs;
+            this._runtime.GetIRuntime().GameScore = gs;
 
             // player
             this.gs.player.on('ready', () => {
@@ -4322,6 +4342,9 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
             // games collections
             this.gs.gamesCollections.on('open', () => this.Trigger(this.conditions.OnGamesCollectionsOpen));
             this.gs.gamesCollections.on('close', () => this.Trigger(this.conditions.OnGamesCollectionsClose));
+
+            this.gs.documents.on('open', () => this.Trigger(this.conditions.OnDocumentsOpen));
+            this.gs.documents.on('close', () => this.Trigger(this.conditions.OnDocumentsClose));
 
             // fullscreen
             this.gs.fullscreen.on('open', () => this.Trigger(this.conditions.OnFullscreenOpen));
@@ -4390,9 +4413,13 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
         SaveToJson() {
             return {
                 leaderboard: this.leaderboard,
+                leaderboardInfo: this.leaderboardInfo,
+                leaderboardRecords: this.leaderboardRecords,
+
                 currentLeaderboardIndex: this.currentLeaderboardIndex,
                 currentLeaderboardPlayer: this.currentLeaderboardPlayer,
                 lastLeaderboardTag: this.lastLeaderboardTag,
+                lastLeaderboardVariant: this.lastLeaderboardVariant,
                 lastLeaderboardPlayerRatingTag: this.lastLeaderboardPlayerRatingTag,
                 leaderboardPlayerPosition: this.leaderboardPlayerPosition,
 
@@ -4481,15 +4508,23 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                 currentGameUrl: this.currentGameUrl,
 
                 gamesCollectionFetchError: this.gamesCollectionFetchError,
-                lastGamesCollectionIdOrTag: this.lastGamesCollectionIdOrTag
+                lastGamesCollectionIdOrTag: this.lastGamesCollectionIdOrTag,
+
+                document: this.document,
+                lastDocumentType: this.lastDocumentType,
+                documentFetchError: this.documentFetchError
             };
         }
 
         LoadFromJson(o) {
             this.leaderboard = o.leaderboard;
+            this.leaderboardInfo = o.leaderboardInfo || {};
+            this.leaderboardRecords = o.leaderboardRecords || {};
+
             this.currentLeaderboardIndex = o.currentLeaderboardIndex;
             this.currentLeaderboardPlayer = o.currentLeaderboardPlayer;
             this.lastLeaderboardTag = o.lastLeaderboardTag;
+            this.lastLeaderboardVariant = o.lastLeaderboardVariant;
             this.lastLeaderboardPlayerRatingTag = o.lastLeaderboardPlayerRatingTag;
             this.leaderboardPlayerPosition = o.leaderboardPlayerPosition || 0;
 
@@ -4585,6 +4620,14 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
 
             this.gamesCollectionFetchError = o.gamesCollectionFetchError || '';
             this.lastGamesCollectionIdOrTag = o.lastGamesCollectionIdOrTag || '';
+
+            this.document = o.document || {
+                type: '',
+                content: ''
+            };
+
+            this.lastDocumentType = o.lastDocumentType || '';
+            this.documentFetchError = o.documentFetchError || '';
         }
 
         GetDebuggerProperties() {
@@ -4933,6 +4976,23 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                             value: this.currentGameUrl
                         }
                     ]
+                },
+                {
+                    title: 'GS - Documents',
+                    properties: [
+                        {
+                            name: 'Document Type',
+                            value: this.document.type
+                        },
+                        {
+                            name: 'Document Content',
+                            value: this.document.content
+                        },
+                        {
+                            name: 'Fetch Error',
+                            value: this.documentFetchError
+                        }
+                    ]
                 }
             ];
         }
@@ -5086,6 +5146,14 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
         },
 
         OnLeaderboardAnyFetchPlayerError() {
+            return true;
+        },
+
+        OnLeaderboardPublishRecord() {
+            return true;
+        },
+
+        OnLeaderboardPublishRecordError() {
             return true;
         },
 
@@ -5521,6 +5589,31 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
             return this.gs.gamesCollections.isAvailable;
         },
 
+        // documents
+        OnDocumentsOpen() {
+            return true;
+        },
+
+        OnDocumentsClose() {
+            return true;
+        },
+
+        OnDocumentsFetchAny() {
+            return true;
+        },
+
+        OnDocumentsFetchAnyError() {
+            return true;
+        },
+
+        OnDocumentsFetch(type) {
+            return this.lastDocumentType === this.mappers.documentTypes[type];
+        },
+
+        OnDocumentsFetchError(type) {
+            return this.lastDocumentType === this.mappers.documentTypes[type];
+        },
+
         OnLoadJsonError() {
             return true;
         }
@@ -5634,6 +5727,8 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                 })
                 .then((leaderboardInfo) => {
                     this.lastLeaderboardTag = tag;
+                    this.lastLeaderboardVariant = 'default';
+                    this.leaderboardInfo = leaderboardInfo.leaderboard;
                     this.leaderboard = leaderboardInfo.players;
                     this.Trigger(this.conditions.OnLeaderboardFetch);
                     this.Trigger(this.conditions.OnLeaderboardAnyFetch);
@@ -5641,6 +5736,7 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                 .catch((err) => {
                     console.warn(err);
                     this.lastLeaderboardTag = tag;
+                    this.lastLeaderboardVariant = 'default';
                     this.Trigger(this.conditions.OnLeaderboardFetchError);
                     this.Trigger(this.conditions.OnLeaderboardAnyFetchError);
                 });
@@ -5657,17 +5753,153 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                     order: order === 0 ? 'DESC' : 'ASC'
                 })
                 .then((result) => {
+                    this.lastLeaderboardTag = tag;
+                    this.lastLeaderboardVariant = 'default';
                     this.lastLeaderboardPlayerRatingTag = tag;
+                    this.currentLeaderboardPlayer = Object.assign(this.gs.player.toJSON(), result.player);
                     this.leaderboardPlayerPosition = result.player.position;
                     this.Trigger(this.conditions.OnLeaderboardFetchPlayer);
                     this.Trigger(this.conditions.OnLeaderboardAnyFetchPlayer);
                 })
                 .catch((err) => {
                     console.warn(err);
+                    this.lastLeaderboardTag = tag;
+                    this.lastLeaderboardVariant = 'default';
                     this.lastLeaderboardPlayerRatingTag = tag;
                     this.Trigger(this.conditions.OnLeaderboardFetchPlayerError);
                     this.Trigger(this.conditions.OnLeaderboardAnyFetchPlayerError);
                 });
+        },
+
+        LeaderboardOpenScoped(idOrTag, variant, order, limit, withMe, includeFields, displayFields) {
+            const id = parseInt(idOrTag, 10) || 0;
+            const query = {
+                id,
+                tag: idOrTag,
+                variant,
+                limit,
+                order: this.mappers.order[order],
+                withMe: this.mappers.withMe[withMe],
+                includeFields: includeFields
+                    .split(',')
+                    .map((o) => o.trim())
+                    .filter((f) => f),
+                displayFields: displayFields
+                    .split(',')
+                    .map((o) => o.trim())
+                    .filter((f) => f)
+            };
+
+            return this.gs.leaderboard.openScoped(query).catch(console.warn);
+        },
+
+        LeaderboardFetchScoped(idOrTag, variant, order, limit, withMe, includeFields) {
+            const id = parseInt(idOrTag, 10) || 0;
+            const query = {
+                id,
+                tag: idOrTag,
+                variant,
+                limit,
+                order: this.mappers.order[order],
+                withMe: this.mappers.withMe[withMe],
+                includeFields: includeFields
+                    .split(',')
+                    .map((o) => o.trim())
+                    .filter((f) => f)
+            };
+
+            return this.gs.leaderboard
+                .fetchScoped(query)
+                .then((leaderboardInfo) => {
+                    this.lastLeaderboardTag = idOrTag;
+                    this.lastLeaderboardVariant = variant;
+                    this.leaderboardInfo = leaderboardInfo.leaderboard;
+                    this.leaderboard = leaderboardInfo.players;
+                    this.Trigger(this.conditions.OnLeaderboardFetch);
+                    this.Trigger(this.conditions.OnLeaderboardAnyFetch);
+                })
+                .catch((err) => {
+                    console.warn(err);
+                    this.lastLeaderboardTag = idOrTag;
+                    this.lastLeaderboardVariant = variant;
+                    this.Trigger(this.conditions.OnLeaderboardFetchError);
+                    this.Trigger(this.conditions.OnLeaderboardAnyFetchError);
+                });
+        },
+
+        LeaderboardFetchPlayerRatingScoped(idOrTag, variant, order) {
+            const id = parseInt(idOrTag, 10) || 0;
+            const query = {
+                id,
+                tag: idOrTag,
+                variant,
+                order: this.mappers.order[order]
+            };
+
+            return this.gs.leaderboard
+                .fetchPlayerRatingScoped(query)
+                .then((result) => {
+                    this.lastLeaderboardPlayerRatingTag = idOrTag;
+                    this.lastLeaderboardTag = idOrTag;
+                    this.lastLeaderboardVariant = variant;
+                    this.currentLeaderboardPlayer = Object.assign(this.gs.player.toJSON(), result.player);
+                    this.leaderboardPlayerPosition = result.player.position;
+                    this.Trigger(this.conditions.OnLeaderboardFetchPlayer);
+                    this.Trigger(this.conditions.OnLeaderboardAnyFetchPlayer);
+                })
+                .catch((err) => {
+                    console.warn(err);
+                    this.lastLeaderboardPlayerRatingTag = idOrTag;
+                    this.lastLeaderboardTag = idOrTag;
+                    this.lastLeaderboardVariant = variant;
+                    this.Trigger(this.conditions.OnLeaderboardFetchPlayerError);
+                    this.Trigger(this.conditions.OnLeaderboardAnyFetchPlayerError);
+                });
+        },
+
+        LeaderboardPublishRecord(idOrTag, variant, override) {
+            const recordsTable = this.leaderboardRecords[idOrTag];
+            const record = recordsTable ? recordsTable[variant] : null;
+
+            const id = parseInt(idOrTag, 10) || 0;
+            const query = {
+                id,
+                tag: idOrTag,
+                variant,
+                override,
+                record
+            };
+
+            return this.gs.leaderboard
+                .publishRecord(query)
+                .then((result) => {
+                    this.lastLeaderboardTag = idOrTag;
+                    this.lastLeaderboardVariant = variant;
+                    this.lastLeaderboardPlayerRatingTag = idOrTag;
+                    this.leaderboardPlayerPosition = result.player.position;
+                    this.currentLeaderboardPlayer = Object.assign(this.gs.player.toJSON(), result.player);
+
+                    this.Trigger(this.conditions.OnLeaderboardPublishRecord);
+                })
+                .catch((err) => {
+                    console.warn(err);
+                    this.lastLeaderboardTag = idOrTag;
+                    this.lastLeaderboardVariant = variant;
+                    this.lastLeaderboardPlayerRatingTag = idOrTag;
+                    this.Trigger(this.conditions.OnLeaderboardPublishRecordError);
+                });
+        },
+
+        LeaderboardSetRecord(idOrTag, variant, field, value) {
+            if (!this.leaderboardRecords[idOrTag]) {
+                this.leaderboardRecords[idOrTag] = {};
+            }
+
+            if (!this.leaderboardRecords[idOrTag][variant]) {
+                this.leaderboardRecords[idOrTag][variant] = {};
+            }
+
+            this.leaderboardRecords[idOrTag][variant][field] = value;
         },
 
         AchievementsOpen() {
@@ -5874,9 +6106,35 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
                 .catch((err) => {
                     console.warn(err);
                     this.lastGamesCollectionIdOrTag = idOrTag;
-                    this.gamesCollectionFetchError = err && err.message || '';
+                    this.gamesCollectionFetchError = (err && err.message) || '';
                     this.Trigger(this.conditions.OnGamesCollectionsFetchError);
                     this.Trigger(this.conditions.OnGamesCollectionsFetchAnyError);
+                });
+        },
+
+        // documents
+        DocumentsOpen(docType) {
+            const type = this.mappers.documentTypes[docType];
+            return this.gs.documents.open({ type });
+        },
+
+        DocumentsFetch(docType, docFormat) {
+            const type = this.mappers.documentTypes[docType];
+            const format = this.mappers.documentFormat[docFormat];
+            return this.gs.documents
+                .fetch({ type, format })
+                .then((result) => {
+                    this.lastDocumentType = type;
+                    this.document = result;
+                    this.Trigger(this.conditions.OnDocumentsFetch);
+                    this.Trigger(this.conditions.OnDocumentsFetchAny);
+                })
+                .catch((err) => {
+                    console.warn(err);
+                    this.lastDocumentType = type;
+                    this.documentFetchError = (err && err.message) || '';
+                    this.Trigger(this.conditions.OnDocumentsFetchError);
+                    this.Trigger(this.conditions.OnDocumentsFetchAnyError);
                 });
         },
 
@@ -6027,6 +6285,14 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
             return this.leaderboardPlayerPosition || 0;
         },
 
+        LastLeaderboardTag() {
+            return this.lastLeaderboardTag;
+        },
+
+        LastLeaderboardVariant() {
+            return this.lastLeaderboardVariant;
+        },
+
         IsFullscreenMode() {
             return Number(this.gs.fullscreen.isEnabled);
         },
@@ -6037,6 +6303,10 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
 
         AvatarGenerator() {
             return this.gs.avatarGenerator;
+        },
+
+        ServerTime() {
+            return this.gs.serverTime;
         },
 
         PlatformType() {
@@ -6304,6 +6574,19 @@ WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},Win
 
         GamesCollectionsFetchError() {
             return this.gamesCollectionFetchError;
+        },
+
+        // documents
+        DocumentsDocumentType() {
+            return this.document.type;
+        },
+
+        DocumentsDocumentContent() {
+            return this.document.content;
+        },
+
+        DocumentsFetchError() {
+            return this.documentFetchError;
         },
 
         AsJSON() {
@@ -8198,7 +8481,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsCloseSticky,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
-		C3.Plugins.PlatformInfo.Cnds.IsOnMobile,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsShowSticky,
 		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.Eponesh_GameScore.Exps.PlayerGet,
@@ -8226,6 +8508,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Eponesh_GameScore.Acts.SocialsShare,
 		C3.Plugins.Eponesh_GameScore.Acts.SocialsJoinCommunity,
 		C3.Plugins.Browser.Acts.GoToURLWindow,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenStart,
+		C3.Plugins.System.Exps.wallclocktime,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenClose,
+		C3.Plugins.GameAnalytics.Acts.addAdEvent,
 		C3.Plugins.Sprite.Acts.AddChild,
 		C3.Plugins.GameAnalytics.Acts.addProgressionEvent,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenAvailable,
@@ -8269,7 +8555,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.System.Acts.CreateObject,
 		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenClose,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.Keyboard.Cnds.OnKey,
 		C3.Plugins.System.Acts.ToggleBoolVar,
@@ -8283,7 +8568,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Audio.Acts.SetSilent,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyAvailable,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsStickyStart,
-		C3.Plugins.GameAnalytics.Acts.addAdEvent,
+		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyPlaying,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
 		C3.Plugins.Sprite.Acts.SetY,
 		C3.Plugins.Timeline.Acts.PlayTimelineByName,
@@ -8300,9 +8585,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.viewportheight,
 		C3.Plugins.System.Cnds.EveryTick,
 		C3.Plugins.Sprite.Acts.SetOpacity,
-		C3.Plugins.System.Exps.loadingprogress,
-		C3.Plugins.System.Exps.uppercase,
-		C3.Plugins.System.Exps.int
+		C3.Plugins.Sprite.Exps.Opacity,
+		C3.Plugins.System.Exps.loadingprogress
 	];
 };
 self.C3_JsPropNameTable = [
@@ -8393,6 +8677,7 @@ self.C3_JsPropNameTable = [
 	{platformStr: 0},
 	{platformText: 0},
 	{platformPrefix: 0},
+	{LastAdStart: 0},
 	{playerID: 0},
 	{platformType: 0},
 	{Level: 0},
@@ -8586,6 +8871,10 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => n0.ExpInstVar();
 		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => Math.floor(((v0.GetValue() - 1) / 9));
+		},
 		() => "Stars",
 		p => {
 			const n0 = p._GetNode(0);
@@ -8699,6 +8988,13 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => v0.GetValue();
+		},
+		() => "main_menu_launch",
+		() => "gamescore",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const v1 = p._GetNode(1).GetVar();
+			return () => (f0() - v1.GetValue());
 		},
 		() => "Pause",
 		() => "SureMenu",
@@ -8939,6 +9235,7 @@ self.C3_ExpressionFuncs = [
 			return () => and("Ходов: ", v0.GetValue());
 		},
 		() => "Click",
+		() => "lvl_start",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpInstVar_Family() + "Tap");
@@ -8960,7 +9257,6 @@ self.C3_ExpressionFuncs = [
 		() => "speed",
 		() => "On",
 		() => "game_banner",
-		() => "gamescore",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => ((((n0.ExpInstVar()) === (2) ? 1 : 0)) ? (275) : (655));
@@ -9049,18 +9345,24 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
+			const n1 = p._GetNode(1);
 			const f2 = p._GetNode(2).GetBoundMethod();
-			return () => ((((n0.ExpObject()) === (1) ? 1 : 0)) ? ((f1() * 100)) : (((1 - f2()) * 100)));
+			const n3 = p._GetNode(3);
+			const f4 = p._GetNode(4).GetBoundMethod();
+			return () => ((((n0.ExpObject()) === (1) ? 1 : 0)) ? (C3.lerp(n1.ExpObject(), (f2() * 100), 0.1)) : (C3.lerp(n3.ExpObject(), ((1 - f4()) * 100), 0.1)));
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
+			const f1 = p._GetNode(1).GetBoundMethod();
 			const f2 = p._GetNode(2).GetBoundMethod();
 			const f3 = p._GetNode(3).GetBoundMethod();
-			return () => f0(n1.ExpObject(f2(Math.floor((f3() * 10)))));
-		},
-		() => "msgs"
+			const f4 = p._GetNode(4).GetBoundMethod();
+			const f5 = p._GetNode(5).GetBoundMethod();
+			const f6 = p._GetNode(6).GetBoundMethod();
+			const f7 = p._GetNode(7).GetBoundMethod();
+			const f8 = p._GetNode(8).GetBoundMethod();
+			return () => ((((f0()) < (0.1) ? 1 : 0)) ? ("Наряжаем елки...") : (((((f1()) < (0.2) ? 1 : 0)) ? ("Поправляем мешки...") : (((((f2()) < (0.3) ? 1 : 0)) ? ("Выбираем подарки...") : (((((f3()) < (0.4) ? 1 : 0)) ? ("Готовим оливье...") : (((((f4()) < (0.5) ? 1 : 0)) ? ("Включаем гирлянды...") : (((((f5()) < (0.6) ? 1 : 0)) ? ("Чистим мандарины...") : (((((f6()) < (0.7) ? 1 : 0)) ? ("Призываем снег...") : (((((f7()) < (0.8) ? 1 : 0)) ? ("Вяжем свитер...") : (((((f8()) < (0.9) ? 1 : 0)) ? ("Почти готовы...") : ("ЗАГРУЗКА..."))))))))))))))))));
+		}
 ];
 
 
