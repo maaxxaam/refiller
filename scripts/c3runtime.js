@@ -8587,81 +8587,68 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.System.Exps.dt,
-		C3.Plugins.System.Cnds.PickNth,
-		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
-		C3.Plugins.Sprite.Acts.SetVisible,
-		C3.Plugins.Particles.Acts.SetRate,
-		C3.Plugins.Particles.Acts.SetTimeout,
+		C3.Plugins.System.Cnds.Else,
+		C3.Plugins.Sprite.Acts.SetInstanceVar,
+		C3.Plugins.Eponesh_GameScore.Exps.PlatformType,
+		C3.Plugins.AJAX.Acts.RequestFile,
+		C3.Plugins.System.Acts.SetBoolVar,
+		C3.Plugins.Browser.Cnds.IsOnline,
+		C3.Plugins.Eponesh_GameScore.Acts.PaymentsFetchProducts,
+		C3.Plugins.Eponesh_GameScore.Acts.PlayerLoad,
+		C3.Plugins.Eponesh_GameScore.Cnds.PlatformType,
+		C3.Plugins.System.Cnds.TriggerOnce,
+		C3.Plugins.GameAnalytics.Acts.configureBuild,
+		C3.Plugins.System.Exps.projectversion,
+		C3.Plugins.GameAnalytics.Acts.initialize,
+		C3.Plugins.Browser.Acts.Alert,
+		C3.Plugins.Text.Acts.AppendText,
+		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.Sprite.Exps.IID,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Acts.GoToLayoutByName,
-		C3.Plugins.System.Cnds.Else,
-		C3.Plugins.Browser.Acts.Alert,
 		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.AJAX.Cnds.OnComplete,
 		C3.Plugins.Arr.Acts.JSONLoad,
 		C3.Plugins.AJAX.Exps.LastData,
 		C3.Plugins.System.Cnds.ForEach,
+		C3.Plugins.System.Cnds.PickNth,
 		C3.Plugins.System.Exps.min,
 		C3.Plugins.Arr.Exps.At,
-		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Text.Acts.SetText,
 		C3.Plugins.System.Cnds.For,
 		C3.Plugins.System.Exps.layerindex,
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.System.Exps.loopindex,
-		C3.Plugins.Eponesh_GameScore.Cnds.PaymentsIsPurchased,
-		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
-		C3.Plugins.GameAnalytics.Acts.addBusinessEvent,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerLoadComplete,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerFetchFields,
 		C3.Plugins.System.Acts.SetGroupActive,
-		C3.Plugins.Browser.Acts.ConsoleLog,
-		C3.Plugins.Eponesh_GameScore.Exps.PlayerID,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerLoadError,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerFetchFieldsError,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnPaymentsFetchProducts,
-		C3.Plugins.System.Acts.SetBoolVar,
-		C3.Plugins.Eponesh_GameScore.Acts.AdsCloseSticky,
-		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
-		C3.Plugins.Eponesh_GameScore.Acts.AdsShowSticky,
-		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.Eponesh_GameScore.Exps.PlayerGet,
 		C3.Plugins.Arr.Acts.SetSize,
 		C3.Plugins.Eponesh_GameScore.Cnds.PlayerCompareScore,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerSet,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerSync,
+		C3.Plugins.Browser.Acts.ConsoleLog,
 		C3.Plugins.Eponesh_GameScore.Cnds.PlayerHasKey,
-		C3.Plugins.Audio.Acts.Play,
+		C3.Plugins.System.Exps.layoutname,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerLoadError,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerSyncError,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnPaymentsAnyPurchase,
-		C3.Plugins.Eponesh_GameScore.Exps.PlatformType,
-		C3.Plugins.Eponesh_GameScore.Acts.PaymentsFetchProducts,
-		C3.Plugins.Eponesh_GameScore.Acts.PlayerLoad,
-		C3.Plugins.AJAX.Acts.RequestFile,
-		C3.Plugins.Sprite.Cnds.PickByUID,
-		C3.Plugins.Eponesh_GameScore.Cnds.PlatformType,
-		C3.Plugins.Text.Acts.AppendText,
-		C3.Plugins.GameAnalytics.Acts.configureGameKey,
-		C3.Plugins.GameAnalytics.Acts.configureSecretKey,
-		C3.Plugins.GameAnalytics.Acts.configureBuild,
-		C3.Plugins.System.Exps.projectversion,
-		C3.Plugins.GameAnalytics.Acts.initialize,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerFetchFieldsError,
 		C3.Plugins.Eponesh_GameScore.Acts.SocialsInvite,
 		C3.Plugins.Eponesh_GameScore.Acts.SocialsShare,
 		C3.Plugins.Eponesh_GameScore.Acts.SocialsJoinCommunity,
 		C3.Plugins.Browser.Acts.GoToURLWindow,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenStart,
-		C3.Plugins.System.Exps.wallclocktime,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenClose,
-		C3.Plugins.GameAnalytics.Acts.addAdEvent,
+		C3.Plugins.GameAnalytics.Acts.configureGameKey,
+		C3.Plugins.GameAnalytics.Acts.configureSecretKey,
+		C3.Plugins.Text.Acts.SetFontSize,
+		C3.Plugins.Dictionary.Acts.JSONLoad,
 		C3.Plugins.Sprite.Acts.AddChild,
 		C3.Plugins.GameAnalytics.Acts.addProgressionEvent,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenAvailable,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
 		C3.Plugins.System.Acts.RestartLayout,
 		C3.Plugins.Sprite.Exps.Count,
 		C3.Plugins.System.Cnds.LayerVisible,
@@ -8675,8 +8662,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.SetScale,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Plugins.Sprite.Acts.ZMoveToObject,
-		C3.Plugins.Dictionary.Acts.JSONLoad,
-		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.Arr.Exps.Height,
 		C3.Plugins.Arr.Cnds.ArrForEach,
 		C3.Plugins.Arr.Exps.CurZ,
@@ -8697,6 +8682,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
 		C3.Plugins.System.Acts.WaitForPreviousActions,
 		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.Arr.Acts.SetX,
 		C3.Plugins.Arr.Exps.AsJSON,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerSetScore,
@@ -8706,7 +8692,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.video.Exps.Y,
 		C3.Plugins.video.Acts.MoveToBottom,
 		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.Touch.Cnds.OnTouchStart,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenClose,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenStart,
+		C3.Plugins.System.Exps.wallclocktime,
+		C3.Plugins.GameAnalytics.Acts.addAdEvent,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.Keyboard.Cnds.OnKey,
 		C3.Plugins.System.Acts.ToggleBoolVar,
@@ -8714,13 +8703,23 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Mouse.Cnds.IsOverObject,
 		C3.Plugins.Audio.Acts.PlayByName,
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerToggle,
-		C3.Plugins.Audio.Cnds.IsTagPlaying,
-		C3.Plugins.Audio.Acts.Stop,
+		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
+		C3.Plugins.Sprite.Acts.SetVisible,
+		C3.Plugins.Particles.Acts.SetRate,
+		C3.Plugins.Particles.Acts.SetTimeout,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenPlaying,
 		C3.Plugins.Audio.Acts.SetSilent,
-		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyAvailable,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsStickyStart,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyPlaying,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsCloseSticky,
+		C3.Plugins.Audio.Cnds.IsTagPlaying,
+		C3.Plugins.Audio.Acts.Play,
+		C3.Plugins.Audio.Acts.Stop,
+		C3.Plugins.Sprite.Cnds.IsOnLayer,
+		C3.Plugins.Eponesh_GameScore.Cnds.PaymentsIsPurchased,
+		C3.Plugins.Eponesh_GameScore.Acts.PaymentsPurchase,
+		C3.Plugins.GameAnalytics.Acts.addBusinessEvent,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnPaymentsFetchProducts,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnPaymentsAnyPurchase,
 		C3.Plugins.System.Cnds.ForEachOrdered,
 		C3.Plugins.Timeline.Acts.SetTimelineTimeByTags,
 		C3.Plugins.Timeline.Acts.PauseTimelineByTags,
@@ -8731,6 +8730,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.AnimationName,
 		C3.Plugins.Timeline.Acts.PlayTimeline,
 		C3.Plugins.Text.Acts.SetPos,
+		C3.Plugins.Touch.Cnds.OnTouchStart,
 		C3.Plugins.Touch.Exps.X,
 		C3.Plugins.Touch.Exps.Y,
 		C3.Plugins.Touch.Cnds.OnTouchEnd,
@@ -8825,6 +8825,9 @@ self.C3_JsPropNameTable = [
 	{Text_Lobster: 0},
 	{TextBox: 0},
 	{Video: 0},
+	{SkipBut: 0},
+	{HelpBut: 0},
+	{NoAdsBut: 0},
 	{Buttons: 0},
 	{AvailableLevels: 0},
 	{UnlockedLvl: 0},
@@ -8834,11 +8837,10 @@ self.C3_JsPropNameTable = [
 	{tmp: 0},
 	{LayerToShow: 0},
 	{AdsDisabled: 0},
-	{secretkey: 0},
-	{gamekey: 0},
-	{platformStr: 0},
 	{platformText: 0},
 	{platformPrefix: 0},
+	{gameKey: 0},
+	{secretKey: 0},
 	{LastAdStart: 0},
 	{playerID: 0},
 	{platformType: 0},
@@ -8853,7 +8855,6 @@ self.C3_JsPropNameTable = [
 	{success: 0},
 	{step: 0},
 	{Moves: 0},
-	{FileLoad: 0},
 	{BottleMargin: 0},
 	{ItemUID: 0},
 	{Speed: 0},
@@ -8999,19 +9000,32 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0();
 		},
-		() => 0,
+		() => "Stars",
+		() => "Lvls",
+		() => "Dict",
+		() => "YA",
+		() => "\n 99 YAN?",
+		() => "fbc4a579b05d18e76f1732ef912912e4",
+		() => "a6cd19c04307220ae2b82887b5a460f22076fa9c",
+		() => "VK",
+		() => "\n 14 голосов?",
+		() => "61d10755c854c0e65d3dbee2fa56abe8",
+		() => "e9ef5db9ec41b5251bf57964d454e69768158c81",
+		() => "OK",
+		() => "\n 79 ОК?",
+		() => "591f87ff1a2a909ac8369fe23c94c34f",
+		() => "6501fd7796202beca39a503da8f563703b5fc586",
+		() => "втра можно будет. Поверишь?",
 		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => ((v0.GetValue()) ? ("On") : ("Off"));
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => ((f0() + "-") + f1());
 		},
-		() => 1,
-		() => 2,
-		() => "Off",
-		() => 3,
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => ((((v0.GetValue()) === (1) ? 1 : 0)) ? ("On") : ("Off"));
-		},
+		() => "Нет подключения к Интернету. Не удалось загрузить настройки и сохранения.",
+		() => "чем, если ее нет?",
+		() => 85,
+		() => "OffShop",
+		() => "OffShopIdle",
 		() => "MainButtons",
 		p => {
 			const n0 = p._GetNode(0);
@@ -9027,9 +9041,6 @@ self.C3_ExpressionFuncs = [
 		() => "Main",
 		() => "Уровень заблокирован. Пройдите предыдущие уровни, чтобы разблокировать этот",
 		() => "Share",
-		() => "VK",
-		() => "OK",
-		() => "YA",
 		() => "Help",
 		p => {
 			const n0 = p._GetNode(0);
@@ -9039,7 +9050,6 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			return () => Math.floor(((v0.GetValue() - 1) / 9));
 		},
-		() => "Stars",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject();
@@ -9056,7 +9066,9 @@ self.C3_ExpressionFuncs = [
 			const v8 = p._GetNode(8).GetVar();
 			const n9 = p._GetNode(9);
 			const v10 = p._GetNode(10).GetVar();
-			return () => and("Stars", ((((v0.GetValue()) >= (f1((v2.GetValue() - 1), (50 - 1))) ? 1 : 0)) ? (0) : (((((n3.ExpObject(v4.GetValue(), 0)) >= (n5.ExpObject(v6.GetValue())) ? 1 : 0)) ? (3) : (((((n7.ExpObject(v8.GetValue(), 1)) >= (n9.ExpObject(v10.GetValue())) ? 1 : 0)) ? (2) : (1)))))));
+			const n11 = p._GetNode(11);
+			const v12 = p._GetNode(12).GetVar();
+			return () => and("Stars", ((or(((v0.GetValue()) >= (f1((v2.GetValue() - 1), (50 - 1))) ? 1 : 0), ((n3.ExpObject(v4.GetValue())) === ((-1)) ? 1 : 0))) ? (0) : (((((n5.ExpObject(v6.GetValue(), 0)) >= (n7.ExpObject(v8.GetValue())) ? 1 : 0)) ? (3) : (((((n9.ExpObject(v10.GetValue(), 1)) >= (n11.ExpObject(v12.GetValue())) ? 1 : 0)) ? (2) : (1)))))));
 		},
 		p => {
 			const v0 = p._GetNode(0).GetVar();
@@ -9071,10 +9083,7 @@ self.C3_ExpressionFuncs = [
 			return () => ((((v0.GetValue()) > (f1((v2.GetValue() - 1), (50 - 1))) ? 1 : 0)) ? ("") : ((v3.GetValue() + 1)));
 		},
 		() => "Layers",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0("MainScreen");
-		},
+		() => 2,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0("Shop");
@@ -9088,24 +9097,19 @@ self.C3_ExpressionFuncs = [
 			const v1 = p._GetNode(1).GetVar();
 			return () => f0(v1.GetValue());
 		},
-		() => "RemoveAds",
-		() => "Вы уже купили отключение рекламы. Спасибо за поддержку!",
-		() => "RUB",
-		() => 99,
-		() => "Anti-ad",
-		() => "Shop",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const n1 = p._GetNode(1);
 			return () => C3.clamp((v0.GetValue() + (((1 - n1.ExpObject()) * 2) - 1)), 0, (Math.ceil((50 / 9)) - 1));
 		},
 		() => "GameScore Storage",
-		() => "Не удалось загрузить прогресс: потеряна связь с сервером",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0("lvlratings");
 		},
 		() => 50,
+		() => 1,
+		() => 0,
 		() => "score",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -9116,8 +9120,6 @@ self.C3_ExpressionFuncs = [
 			return () => f0("score");
 		},
 		() => "music",
-		() => -10,
-		() => "Music",
 		() => "sfx",
 		() => "extraanim",
 		p => {
@@ -9125,52 +9127,44 @@ self.C3_ExpressionFuncs = [
 			return () => f0("speed");
 		},
 		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => ((((v0.GetValue()) === (2) ? 1 : 0)) ? ("Off") : ("On"));
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const v1 = p._GetNode(1).GetVar();
+			const v2 = p._GetNode(2).GetVar();
+			return () => (f0() + ((or(v1.GetValue(), v2.GetValue())) ? ("On") : ("Off")));
 		},
 		() => "Не удалось обновить прогресс: потеряно соединение с сервером. Проверьте свое интернет-соединение и повторите попытку.",
-		() => 84,
-		() => "\n 99 YAN?",
-		() => "fbc4a579b05d18e76f1732ef912912e4",
-		() => "a6cd19c04307220ae2b82887b5a460f22076fa9c",
-		() => "\n 14 голосов?",
-		() => "61d10755c854c0e65d3dbee2fa56abe8",
-		() => "e9ef5db9ec41b5251bf57964d454e69768158c81",
-		() => "\n 79 ОК?",
-		() => "591f87ff1a2a909ac8369fe23c94c34f",
-		() => "6501fd7796202beca39a503da8f563703b5fc586",
-		() => "втра можно будет. Поверишь?",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => ((f0() + "-") + f1());
-		},
 		() => "В классную игру сейчас залип, попробуй и ты!",
 		() => "",
 		() => "https://vk.com/casketwithgames",
 		() => "NewWindow",
+		() => 84,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => v0.GetValue();
 		},
-		() => "main_menu_launch",
-		() => "gamescore",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			const v1 = p._GetNode(1).GetVar();
-			return () => (f0() - v1.GetValue());
+			return () => ((((f0()) === ("NONE") ? 1 : 0)) ? (30) : (36));
 		},
 		() => "Pause",
 		() => "SureMenu",
-		() => "Lvls",
-		() => "Dict",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => and("Level ", v0.GetValue());
 		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (v0.GetValue() - 1);
+		},
 		() => 5,
 		() => "Intro",
 		() => "FromMain",
+		() => "Purchased",
+		() => "PurchasedIdle",
+		() => "Отключить рекламу за 99 YAN?",
+		() => "Отключить рекламу за 14 голосов?",
+		() => "Отключить рекламу за 79 ОК?",
+		() => "Отключить рекламу завтра можно будет. Поверишь?",
 		() => "Pause Menu",
 		() => "Bottles",
 		p => {
@@ -9256,15 +9250,12 @@ self.C3_ExpressionFuncs = [
 			return () => and(n0.ExpObject((n1.ExpObject(f2("Bottles"), f3("Items"))).toString()), "s");
 		},
 		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => (v0.GetValue() - 1);
-		},
-		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			return () => n0.ExpObject((n1.ExpObject() - 1), 0);
 		},
 		() => "Pick",
+		() => 3,
 		p => {
 			const n0 = p._GetNode(0);
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -9423,6 +9414,19 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "Click",
 		() => "lvl_start",
+		() => "gamescore",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const v1 = p._GetNode(1).GetVar();
+			return () => (f0() - v1.GetValue());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			const n2 = p._GetNode(2);
+			const v3 = p._GetNode(3).GetVar();
+			return () => ((((n0.ExpObject((v1.GetValue() - 1))) !== (0) ? 1 : 0)) ? (n2.ExpObject((v3.GetValue() - 1))) : ((-1)));
+		},
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpInstVar_Family() + "Tap");
@@ -9435,15 +9439,42 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpInstVar_Family() + "Idle");
 		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((v0.GetValue()) ? ("On") : ("Off"));
+		},
+		() => "Off",
 		() => 100,
 		() => 7.5,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((((v0.GetValue()) === (2) ? 1 : 0)) ? (1) : (2));
 		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((((v0.GetValue()) === (1) ? 1 : 0)) ? ("On") : ("Off"));
+		},
 		() => "speed",
-		() => "On",
-		() => "game_banner",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0() + "On");
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0() + "Off");
+		},
+		() => "Music",
+		() => -10,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((((v0.GetValue()) === (2) ? 1 : 0)) ? ("Off") : ("On"));
+		},
+		() => "Shop",
+		() => "RemoveAds",
+		() => "Вы уже купили отключение рекламы. Спасибо за поддержку!",
+		() => "RUB",
+		() => 99,
+		() => "Anti-ad",
 		() => "Under",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
