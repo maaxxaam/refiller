@@ -8583,7 +8583,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.video,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.System.Acts.SetLayerVisible,
-		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.System.Exps.dt,
@@ -8603,6 +8602,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Browser.Acts.Alert,
 		C3.Plugins.Text.Acts.AppendText,
 		C3.Plugins.Sprite.Cnds.PickByUID,
+		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.System.Cnds.CompareVar,
@@ -8633,7 +8633,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Eponesh_GameScore.Acts.PlayerSync,
 		C3.Plugins.Browser.Acts.ConsoleLog,
 		C3.Plugins.Eponesh_GameScore.Cnds.PlayerHasKey,
-		C3.Plugins.System.Exps.layoutname,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerLoadError,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerSyncError,
 		C3.Plugins.Eponesh_GameScore.Cnds.OnPlayerFetchFieldsError,
@@ -8709,6 +8708,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Particles.Acts.SetTimeout,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenPlaying,
 		C3.Plugins.Audio.Acts.SetSilent,
+		C3.Plugins.System.Exps.layoutname,
 		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsStickyPlaying,
 		C3.Plugins.Eponesh_GameScore.Acts.AdsCloseSticky,
 		C3.Plugins.Audio.Cnds.IsTagPlaying,
@@ -8992,11 +8992,6 @@ self.C3_ExpressionFuncs = [
 		() => "Levels",
 		() => "MainScreen",
 		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			return () => ((or(v0.GetValue(), v1.GetValue())) ? ("On") : ("Off"));
-		},
-		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0();
 		},
@@ -9125,12 +9120,6 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0("speed");
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const v1 = p._GetNode(1).GetVar();
-			const v2 = p._GetNode(2).GetVar();
-			return () => (f0() + ((or(v1.GetValue(), v2.GetValue())) ? ("On") : ("Off")));
 		},
 		() => "Не удалось обновить прогресс: потеряно соединение с сервером. Проверьте свое интернет-соединение и повторите попытку.",
 		() => "В классную игру сейчас залип, попробуй и ты!",
@@ -9459,10 +9448,6 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (f0() + "On");
 		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0() + "Off");
-		},
 		() => "Music",
 		() => -10,
 		p => {
@@ -9475,6 +9460,16 @@ self.C3_ExpressionFuncs = [
 		() => "RUB",
 		() => 99,
 		() => "Anti-ad",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const v1 = p._GetNode(1).GetVar();
+			const v2 = p._GetNode(2).GetVar();
+			return () => (f0() + ((or(v1.GetValue(), v2.GetValue())) ? ("On") : ("Off")));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpInstVar() + "Idle");
+		},
 		() => "Under",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
